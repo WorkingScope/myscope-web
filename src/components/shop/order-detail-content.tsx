@@ -93,7 +93,7 @@ export const FULFILLMENT_STEPS: Array<{ key: FulfillmentStatus; label: string; f
 
 export function formatMoney(amount: number | string, currency = "LKR") {
   const n = typeof amount === "number" ? amount : Number(amount)
-  if (!Number.isFinite(n)) return `${currency} —`
+  if (!Number.isFinite(n)) return `${currency} -`
   return `${currency} ${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 
@@ -192,7 +192,7 @@ export function OrderMainDetails({ order, items }: { order: OrderDetail; items: 
                         Pickup at
                       </div>
                       <div className="mt-0.5 text-xs text-foreground">
-                        {it.pickup_location || it.pickup_event?.venue_name || "—"}
+                        {it.pickup_location || it.pickup_event?.venue_name || "-"}
                       </div>
                       {it.pickup_location_url && (
                         <a
@@ -421,7 +421,7 @@ export function OrderInlineDetail({
                         Pickup at
                       </div>
                       <div className="mt-0.5 text-xs text-foreground">
-                        {it.pickup_location || it.pickup_event?.venue_name || "—"}
+                        {it.pickup_location || it.pickup_event?.venue_name || "-"}
                       </div>
                       {it.pickup_location_url && (
                         <a

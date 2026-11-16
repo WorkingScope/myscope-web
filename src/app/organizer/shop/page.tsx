@@ -77,7 +77,7 @@ const STATUS_FILTERS: Array<{ value: "all" | ProductStatus; label: string }> = [
 
 function formatMoney(amount: number | string, currency = "LKR") {
   const n = typeof amount === "number" ? amount : Number(amount)
-  if (!Number.isFinite(n)) return `${currency} —`
+  if (!Number.isFinite(n)) return `${currency} -`
   return `${currency} ${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 
@@ -482,7 +482,7 @@ export default function OrganizerShopPage() {
                 <h2 className="text-lg font-semibold text-foreground">Delete permanently?</h2>
                 <p className="mt-1 text-sm text-muted-foreground">
                   <span className="font-semibold text-foreground">&ldquo;{deleteTarget.title}&rdquo;</span> will be
-                  removed for good — this can&apos;t be undone. Products with past orders can&apos;t be deleted;
+                  removed for good - this can&apos;t be undone. Products with past orders can&apos;t be deleted;
                   archive them instead.
                 </p>
               </div>

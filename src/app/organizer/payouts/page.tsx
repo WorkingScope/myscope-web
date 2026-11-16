@@ -382,7 +382,7 @@ export default function OrganizerPayoutsPage() {
               <div className="min-w-0 flex-1">
                 <h2 className="text-lg font-semibold text-foreground">Remove this row?</h2>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  This permanently removes it from your payout history — this can&apos;t be undone.
+                  This permanently removes it from your payout history - this can&apos;t be undone.
                 </p>
               </div>
             </div>

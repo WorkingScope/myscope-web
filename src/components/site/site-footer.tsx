@@ -63,7 +63,7 @@ export function SiteFooter() {
               <FooterLogo className="h-20 w-auto sm:h-24" />
             </Link>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground sm:mt-5">
-              MyScope is Sri Lanka&rsquo;s Smartest Ticket Booking Platform — concerts, theatre, sports, and everything in between. Discover, book, and show up with QR coded tickets, real time seat maps, and instant gate check in.
+              MyScope is Sri Lanka&rsquo;s Smartest Ticket Booking Platform - concerts, theatre, sports, and everything in between. Discover, book, and show up with QR coded tickets, real time seat maps, and instant gate check in.
             </p>
             <div className="mt-4 flex gap-3 sm:mt-7">
               {SOCIAL.map(({ icon: Icon, href, label, iconClass }) => (

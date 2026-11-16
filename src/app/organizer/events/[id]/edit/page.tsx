@@ -545,7 +545,7 @@ export default function EditEventPage() {
           <FieldGroup
             id="trailer_url"
             label="YouTube trailer (optional)"
-            hint="Paste a YouTube link — watch URL, youtu.be short link, or Shorts. Attendees will see it as a playable video on your event page."
+            hint="Paste a YouTube link - watch URL, youtu.be short link, or Shorts. Attendees will see it as a playable video on your event page."
           >
             <Input
               id="trailer_url"
@@ -1089,7 +1089,7 @@ function DisplayRow({
             size="icon-sm"
             onClick={onDelete}
             disabled={busy || ticket.quantity_sold > 0}
-            aria-label={ticket.quantity_sold > 0 ? "Cannot delete — has bookings" : "Delete"}
+            aria-label={ticket.quantity_sold > 0 ? "Cannot delete - has bookings" : "Delete"}
             className="text-destructive hover:bg-destructive/10"
           >
             {busy ? <Loader className="animate-spin" /> : <Trash2 />}
@@ -1166,7 +1166,7 @@ function DraftRow({
           <span className="text-sm">
             <span className="font-medium text-foreground">Free seating tier</span>
             <span className="block text-xs text-muted-foreground">
-              Sold as general admission — first-come, first-served. Buyers pick a quantity instead of specific seats.
+              Sold as general admission - first-come, first-served. Buyers pick a quantity instead of specific seats.
             </span>
           </span>
         </label>

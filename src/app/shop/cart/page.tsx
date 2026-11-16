@@ -18,7 +18,7 @@ import { useAuth } from "@/context/AuthContext"
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
 function formatMoney(amount: number, currency = "LKR") {
-  if (!Number.isFinite(amount)) return `${currency} —`
+  if (!Number.isFinite(amount)) return `${currency} -`
   return `${currency} ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 
@@ -171,7 +171,7 @@ function OrganizerCart({ organizerId, organizer }: { organizerId: string; organi
               : `/auth/login?redirect=${encodeURIComponent(`/shop/checkout/${organizerId}`)}`}
             className="inline-flex items-center justify-center gap-2"
           >
-            Checkout — {formatMoney(subtotal, currency)}
+            Checkout - {formatMoney(subtotal, currency)}
             <ArrowRight className="h-4 w-4" />
           </Link>
         </Button>

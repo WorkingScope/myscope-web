@@ -127,7 +127,7 @@ export default async function HomePage() {
                 </h2>
                 <p className="mt-2 text-sm text-white/80 dark:text-muted-foreground sm:mt-3 sm:text-base">
                   Publish your event, take secure payments, scan tickets at the door,
-                  and request payouts anytime — all from one dashboard built for Sri Lankan organizers.
+                  and request payouts anytime - all from one dashboard built for Sri Lankan organizers.
                 </p>
                 <div className="mt-4 flex flex-col gap-2 sm:mt-6 sm:flex-row sm:gap-3">
                   <Button
@@ -208,7 +208,7 @@ export default async function HomePage() {
               </h2>
               <p className="mt-2 text-sm text-white/80 dark:text-muted-foreground sm:mt-3 sm:text-base">
                 Manage events, monitor ticket sales, track bookings, handle check-ins, and
-                access real-time event insights — all from one powerful platform designed
+                access real-time event insights - all from one powerful platform designed
                 to simplify event management.
               </p>
               <div className="mt-5 flex justify-center sm:mt-6">
@@ -259,7 +259,7 @@ function DefaultHero() {
         </h1>
 
         <p className="mt-3 max-w-md text-pretty text-sm leading-relaxed text-white/80 sm:mt-4 sm:text-base">
-          Entertain in a perfect scope — concerts, theatre, sports, and more.
+          Entertain in a perfect scope - concerts, theatre, sports, and more.
         </p>
 
         {/* Search — white pill against the violet band so it pops as the

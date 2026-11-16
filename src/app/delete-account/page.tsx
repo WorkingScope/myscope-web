@@ -36,7 +36,7 @@ const SECTIONS: { h: string; p: string[] }[] = [
   {
     h: "4. Organizer accounts",
     p: [
-      "If your organizer account has upcoming events, tickets already sold, or a pending payout, we'll need to resolve those first — for example by completing or cancelling the event and settling any payout — before the account itself can be deleted. Your attendees' own booking records are not affected by your account deletion.",
+      "If your organizer account has upcoming events, tickets already sold, or a pending payout, we'll need to resolve those first - for example by completing or cancelling the event and settling any payout - before the account itself can be deleted. Your attendees' own booking records are not affected by your account deletion.",
     ],
   },
   {

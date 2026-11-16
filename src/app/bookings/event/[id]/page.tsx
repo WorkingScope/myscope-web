@@ -300,7 +300,7 @@ export default function EventBookingDetailPage() {
  const handleTransferSeatTicket = async (ticket: SeatTicket) => {
   if (!data?.booking) return;
   const recipient = window.prompt(
-   `Transfer this ticket to someone else?\n\nEnter their email address — we'll send them the QR.`,
+   `Transfer this ticket to someone else?\n\nEnter their email address - we'll send them the QR.`,
    '',
   );
   if (!recipient || !recipient.trim()) return;
@@ -557,18 +557,18 @@ export default function EventBookingDetailPage() {
      <div className="mb-4 flex items-center gap-2 p-3 text-sm font-inter border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
       {reconciling && <Loader className="w-4 h-4 animate-spin shrink-0" />}
       <span>
-       Payment received — confirming your booking{reconciling ? '… (this can take a few seconds)' : '. This page will update shortly.'}
+       Payment received - confirming your booking{reconciling ? '… (this can take a few seconds)' : '. This page will update shortly.'}
       </span>
      </div>
     )}
     {paymentResult === 'cancelled' && (
      <div className="mb-4 p-3 text-sm font-inter border border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400">
-      Payment was cancelled. Your tickets are still reserved — you can try again below.
+      Payment was cancelled. Your tickets are still reserved - you can try again below.
      </div>
     )}
     {paymentResult === 'refund_pending' && (
      <div className="mb-4 p-3 text-sm font-inter border border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400">
-      Your Koko payment went through, but these seats were just taken by another buyer, so we couldn&rsquo;t confirm this booking. A full refund has been initiated — our team will process it within 3 business days. We&rsquo;re sorry for the inconvenience.
+      Your Koko payment went through, but these seats were just taken by another buyer, so we couldn&rsquo;t confirm this booking. A full refund has been initiated - our team will process it within 3 business days. We&rsquo;re sorry for the inconvenience.
      </div>
     )}
 
@@ -691,7 +691,7 @@ export default function EventBookingDetailPage() {
         </>
        ) : (
         <>
-         <Row label="Ticket type" value={ticket_type?.name ?? '—'} />
+         <Row label="Ticket type" value={ticket_type?.name ?? '-'} />
          <Row
           label={isReserved ? 'Seats' : 'Quantity'}
           value={String(booking.number_of_tickets)}
@@ -713,8 +713,8 @@ export default function EventBookingDetailPage() {
        </h3>
        {booking.attendee_info && (
         <>
-         <div className="text-sm text-foreground">{booking.attendee_info.name || '—'}</div>
-         <div className="text-sm text-muted-foreground">{booking.attendee_info.email || '—'}</div>
+         <div className="text-sm text-foreground">{booking.attendee_info.name || '-'}</div>
+         <div className="text-sm text-muted-foreground">{booking.attendee_info.email || '-'}</div>
          {booking.attendee_info.phone && (
           <div className="text-sm text-muted-foreground">{booking.attendee_info.phone}</div>
          )}
@@ -840,7 +840,7 @@ export default function EventBookingDetailPage() {
            disabled={paying}
           />
           <span className="text-sm font-inter">
-           <span className="font-semibold">KOKO</span> — Pay in 3 interest-free instalments
+           <span className="font-semibold">KOKO</span> - Pay in 3 interest-free instalments
           </span>
          </label>
         </div>
@@ -914,12 +914,12 @@ export default function EventBookingDetailPage() {
          {downloadingTicket ? <Loader className="w-4 h-4 animate-spin" /> : <Ticket className="w-4 h-4" />}
          {downloadingTicket ? 'Preparing…' : 'Download ticket (QR)'}
         </button>
-        <span className="text-xs">Individual tickets are being generated — refresh in a moment.</span>
+        <span className="text-xs">Individual tickets are being generated - refresh in a moment.</span>
        </div>
       ) : (
        <ul className="space-y-2">
         {seatTickets.map((t, i) => {
-         const seatLabel = t.seat?.seat_label || '—';
+         const seatLabel = t.seat?.seat_label || '-';
          const sectionLabel = t.seat?.section || '';
          const checkedIn = t.check_in_status === 'checked-in';
          // Reserved tickets are labelled by seat; GA tickets by index.
@@ -950,7 +950,7 @@ export default function EventBookingDetailPage() {
              type="button"
              onClick={() => handleTransferSeatTicket(t)}
              disabled={transferringId === t.id || checkedIn}
-             title={checkedIn ? 'Already used — cannot transfer' : 'Send to a different email'}
+             title={checkedIn ? 'Already used - cannot transfer' : 'Send to a different email'}
              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-inter font-semibold disabled:opacity-50 disabled:cursor-not-allowed rounded-2xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm hover:bg-muted text-foreground"
             >
              {transferringId === t.id ? (

@@ -482,7 +482,7 @@ function CheckoutPageInner() {
  React.useEffect(() => {
   if (promoApplied) {
    setPromoApplied(null)
-   setPromoError("Subtotal changed — please re-apply your promo code.")
+   setPromoError("Subtotal changed - please re-apply your promo code.")
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
  }, [subtotal])
@@ -731,7 +731,7 @@ function CheckoutPageInner() {
      <span>
       {event.postponed_to
        ? `This event has been postponed to ${new Date(event.postponed_to).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric" })}. Your tickets remain valid for the new date.`
-       : "This event has been postponed — a new date will be announced soon. Your tickets remain valid."}
+       : "This event has been postponed - a new date will be announced soon. Your tickets remain valid."}
      </span>
     </div>
    )}
@@ -831,7 +831,7 @@ function CheckoutPageInner() {
       {/* Open-seating notice — free mode means seats exist but aren't assigned */}
       {isFree && (
        <div className="border-b border-border bg-muted/30 px-5 py-2.5 text-xs text-muted-foreground">
-        Open seating — pick a seat on arrival, first come, first served.
+        Open seating - pick a seat on arrival, first come, first served.
        </div>
       )}
 

@@ -3,14 +3,14 @@ import { Mail } from "lucide-react"
 import { SiWhatsapp, SiGooglemaps } from "react-icons/si"
 
 export const metadata: Metadata = {
-  title: { absolute: "Contact MyScope — Ticketing Support in Sri Lanka" },
+  title: { absolute: "Contact MyScope - Ticketing Support in Sri Lanka" },
   description:
-    "Reach the MyScope team by email or WhatsApp for booking help, refund questions, or organizer support — we typically respond within a day, island-wide.",
+    "Reach the MyScope team by email or WhatsApp for booking help, refund questions, or organizer support - we typically respond within a day, island-wide.",
   alternates: { canonical: "https://www.myscope.lk/contact" },
   openGraph: {
-    title: "Contact MyScope — Ticketing Support in Sri Lanka",
+    title: "Contact MyScope - Ticketing Support in Sri Lanka",
     description:
-      "Reach the MyScope team by email or WhatsApp for booking help, refund questions, or organizer support — we typically respond within a day, island-wide.",
+      "Reach the MyScope team by email or WhatsApp for booking help, refund questions, or organizer support - we typically respond within a day, island-wide.",
     url: "https://www.myscope.lk/contact",
     type: "website",
   },
@@ -23,7 +23,7 @@ export default function ContactPage() {
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
       <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">Contact us</h1>
       <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-        We&rsquo;re here to help — whether you&rsquo;re booking tickets or hosting an event. Reach us
+        We&rsquo;re here to help - whether you&rsquo;re booking tickets or hosting an event. Reach us
         through any of the channels below and we&rsquo;ll get back to you as soon as we can.
       </p>
 

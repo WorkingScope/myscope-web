@@ -906,7 +906,7 @@ export function SeatMapPicker({
       {holdSecondsLeft !== null && holdSecondsLeft <= 0 && selectedIds.size > 0 && (
         <div className="flex items-center justify-center gap-2 text-sm font-medium text-amber-600 dark:text-amber-400">
           <Clock className="h-4 w-4 shrink-0" />
-          <span>Your hold has expired — please re-select your seats.</span>
+          <span>Your hold has expired - please re-select your seats.</span>
         </div>
       )}
 
@@ -1071,7 +1071,7 @@ export function SeatMapPicker({
                   )}
                   {sectionIsDimmed && (
                     <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
-                      (locked — different tier)
+                      (locked - different tier)
                     </span>
                   )}
                 </div>
@@ -1187,7 +1187,7 @@ function SeatButton({
 
   const title = seat.ticket_type
     ? `${seat.seat_label || seat.seat_number} · ${seat.ticket_type.name} · LKR ${seat.ticket_type.price.toLocaleString()}${
-        lockedTier ? " (different tier — click to switch)" : ""
+        lockedTier ? " (different tier - click to switch)" : ""
       }`
     : seat.seat_label || seat.seat_number
 
@@ -1467,7 +1467,7 @@ function VisualSeat({
 
   const title = seat.ticket_type
     ? `${seat.seat_label || seat.seat_number} · ${seat.ticket_type.name} · LKR ${seat.ticket_type.price.toLocaleString()}${
-        lockedTier ? " (different tier — click to switch)" : ""
+        lockedTier ? " (different tier - click to switch)" : ""
       }`
     : (seat.seat_label || seat.seat_number)
 

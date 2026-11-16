@@ -15,12 +15,12 @@ import {
 const FOUNDER_LINKEDIN = "https://www.linkedin.com/in/akila-jayakody-4b0289214/"
 
 export const metadata: Metadata = {
-  title: { absolute: "About MyScope — Sri Lanka's Event Ticketing Platform" },
+  title: { absolute: "About MyScope - Sri Lanka's Event Ticketing Platform" },
   description:
     "MyScope is Sri Lanka's smartest ticket booking platform, built by Akila Jayakody to make discovering and booking concerts, theatre, and sports effortless.",
   alternates: { canonical: "https://www.myscope.lk/about" },
   openGraph: {
-    title: "About MyScope — Sri Lanka's Smartest Event Ticket booking Platform",
+    title: "About MyScope - Sri Lanka's Smartest Event Ticket booking Platform",
     description:
       "How MyScope works, what we've built, and the story behind it.founded by Akila Jayakody, a Sri Lankan Data engineer building for the local events industry.",
     url: "https://www.myscope.lk/about",
@@ -69,7 +69,7 @@ const orgWithFounderJsonLd = {
   },
   areaServed: "LK",
   description:
-    "Sri Lanka's Smartest Event Ticket booking Platform — concerts, theatre, sports, and experiences. Discover events, book tickets, and walk in with a QR coded e ticket.",
+    "Sri Lanka's Smartest Event Ticket booking Platform - concerts, theatre, sports, and experiences. Discover events, book tickets, and walk in with a QR coded e ticket.",
 }
 
 const platformFeatures = [
@@ -77,13 +77,13 @@ const platformFeatures = [
     icon: Ticket,
     title: "Every kind of ticketing",
     body:
-      "General admission, free seating, zoned tiers, and full reserved seating with a visual seat map — one platform handles every venue layout.",
+      "General admission, free seating, zoned tiers, and full reserved seating with a visual seat map - one platform handles every venue layout.",
   },
   {
     icon: QrCode,
     title: "QR-coded e-tickets",
     body:
-      "Tickets arrive by email and SMS the moment payment clears. Organizers scan them at the gate with our mobile app — no printing, no queues.",
+      "Tickets arrive by email and SMS the moment payment clears. Organizers scan them at the gate with our mobile app - no printing, no queues.",
   },
   {
     icon: CreditCard,
@@ -101,13 +101,13 @@ const platformFeatures = [
     icon: Smartphone,
     title: "Mobile apps for everyone",
     body:
-      "A consumer app for fans on iOS and Android, plus a dedicated organizer + scanner app — the same MyScope experience, native on every device.",
+      "A consumer app for fans on iOS and Android, plus a dedicated organizer + scanner app - the same MyScope experience, native on every device.",
   },
   {
     icon: MapPin,
     title: "Built for Sri Lanka",
     body:
-      "Designed around how Sri Lankan venues, organizers, and audiences actually operate — not a foreign product translated and resold.",
+      "Designed around how Sri Lankan venues, organizers, and audiences actually operate - not a foreign product translated and resold.",
   },
 ]
 
@@ -193,7 +193,7 @@ export default function AboutPage() {
           <h2 className="text-xl font-semibold text-foreground">For organizers</h2>
           <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             Publish your event, sell multi tier tickets, scan attendees at the gate, and
-            get paid — all from one dashboard built for Sri Lankan organizers.
+            get paid - all from one dashboard built for Sri Lankan organizers.
           </p>
           <Link
             href="/become-organizer"

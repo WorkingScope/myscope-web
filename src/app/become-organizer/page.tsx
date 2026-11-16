@@ -402,7 +402,7 @@ export default function BecomeOrganizerPage() {
                         </button>
                       )}
                       <p className="mt-1.5 text-xs text-muted-foreground">
-                        PNG, JPG, or WebP — under 5 MB. Use your brand logo if you have one.
+                        PNG, JPG, or WebP - under 5 MB. Use your brand logo if you have one.
                       </p>
                     </div>
                   </div>

@@ -53,7 +53,7 @@ const emptyAddress: ShippingAddress = {
 }
 
 function formatMoney(amount: number, currency = "LKR") {
-  if (!Number.isFinite(amount)) return `${currency} —`
+  if (!Number.isFinite(amount)) return `${currency} -`
   return `${currency} ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 

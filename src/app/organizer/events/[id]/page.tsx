@@ -175,7 +175,7 @@ const formatLkr = (n: number | string | null | undefined) => {
 }
 
 const formatWhen = (iso?: string | null) => {
-  if (!iso) return "—"
+  if (!iso) return "-"
   return new Date(iso).toLocaleString("en-US", {
     month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit",
   })
@@ -185,7 +185,7 @@ const formatWhen = (iso?: string | null) => {
 // the live dashboard stays at "12 sec ago" / "3 min ago" / "2 hr ago" without
 // drifting into multi-word strings.
 const formatRelative = (iso?: string | null) => {
-  if (!iso) return "—"
+  if (!iso) return "-"
   const diffMs = Date.now() - new Date(iso).getTime()
   if (diffMs < 0) return formatWhen(iso)
   const sec = Math.floor(diffMs / 1000)
@@ -614,7 +614,7 @@ function OverviewTab({ eventId }: { eventId: string }) {
   const s = data.summary
   const bookingsCount = data.attendees?.length ?? 0
   const checkinPct = s.total_sold > 0 ? Math.round((s.total_checked_in / s.total_sold) * 100) : 0
-  const invitesValue = invites ? String(invites.sent + invites.failed) : "—"
+  const invitesValue = invites ? String(invites.sent + invites.failed) : "-"
   return (
     <div className="space-y-5">
       {/* Headline stat cards — same 4 the standalone analytics page used. */}
@@ -639,7 +639,7 @@ function OverviewTab({ eventId }: { eventId: string }) {
           icon={CheckCircle}
           label="Checked in"
           value={`${s.total_checked_in} / ${s.total_sold}`}
-          hint={s.total_sold > 0 ? `${checkinPct}%` : "—"}
+          hint={s.total_sold > 0 ? `${checkinPct}%` : "-"}
           tone="success"
         />
       </div>
@@ -878,8 +878,8 @@ function AttendeesTab({ eventId }: { eventId: string }) {
       />
       <ul className="space-y-2">
         {filtered.map(b => {
-          const name = b.attendee_info?.name || b.guest_name || "—"
-          const email = b.attendee_info?.email || b.guest_email || "—"
+          const name = b.attendee_info?.name || b.guest_name || "-"
+          const email = b.attendee_info?.email || b.guest_email || "-"
           const checkedTickets = b.checked_in_tickets ?? 0
           const fullyIn = checkedTickets > 0 && checkedTickets >= b.number_of_tickets
           const partiallyIn = checkedTickets > 0 && checkedTickets < b.number_of_tickets
@@ -1032,7 +1032,7 @@ function CheckinTab({ eventId }: { eventId: string }) {
             {data.recent.map(r => (
               <li key={r.id} className="flex items-center justify-between rounded-lg border border-border bg-transparent px-4 py-2 text-sm">
                 <div className="min-w-0">
-                  <div className="truncate font-medium text-foreground">{r.name || "—"}</div>
+                  <div className="truncate font-medium text-foreground">{r.name || "-"}</div>
                   <div className="text-xs font-mono text-muted-foreground">{r.booking_reference} · {r.number_of_tickets} ticket(s)</div>
                 </div>
                 <div className="shrink-0 text-xs text-muted-foreground">{r.checked_in_at ? new Date(r.checked_in_at).toLocaleTimeString() : ""}</div>
@@ -1200,7 +1200,7 @@ function ScannersTab({ eventId }: { eventId: string }) {
       <form onSubmit={submit} className="space-y-3 rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-4">
         <h3 className="text-sm font-semibold text-foreground">Issue scanner invite</h3>
         <p className="text-xs text-muted-foreground">
-          Generate a one-time code your door staff can redeem in the MyScope Organizer app to scan tickets — no MyScope account required.
+          Generate a one-time code your door staff can redeem in the MyScope Organizer app to scan tickets - no MyScope account required.
         </p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Input
@@ -1743,13 +1743,13 @@ function WaitlistTab({ eventId }: { eventId: string }) {
   return (
     <div className="space-y-2">
       <p className="text-xs text-muted-foreground">
-        These people will be notified when seats open up. (Auto-notification cron is coming — for now, you can reach out manually.)
+        These people will be notified when seats open up. (Auto-notification cron is coming - for now, you can reach out manually.)
       </p>
       <ul className="space-y-2">
         {entries.map(w => (
           <li key={w.id} className="flex items-center justify-between rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-4">
             <div className="min-w-0">
-              <div className="font-semibold text-foreground">{w.name || "—"}</div>
+              <div className="font-semibold text-foreground">{w.name || "-"}</div>
               <div className="text-xs text-muted-foreground">{w.email} · wants {w.requested_quantity} ticket(s)</div>
             </div>
             <div className="shrink-0 text-xs text-muted-foreground">
@@ -1820,7 +1820,7 @@ function CommsTab({ eventId }: { eventId: string }) {
       <div>
         <h3 className="text-sm font-semibold text-foreground">Send announcement to attendees</h3>
         <p className="mt-1 text-xs text-muted-foreground">
-          Goes to every confirmed attendee — parking info, schedule updates, weather notes, or any other heads-up. Deduplicated.
+          Goes to every confirmed attendee - parking info, schedule updates, weather notes, or any other heads-up. Deduplicated.
         </p>
       </div>
 
@@ -2060,7 +2060,7 @@ function InviteTab({ eventId, tickets }: { eventId: string; tickets: TicketType[
             <Send className="h-4 w-4" />
           </span>
           <div>
-            <h2 className="text-base font-semibold text-foreground">Invite someone — they get a free ticket</h2>
+            <h2 className="text-base font-semibold text-foreground">Invite someone - they get a free ticket</h2>
             <p className="text-xs text-muted-foreground">
               Pick the tier, choose how many tickets, and we&apos;ll email a
               QR-coded comp ticket to your invitee. Comps come out of the
@@ -2072,7 +2072,7 @@ function InviteTab({ eventId, tickets }: { eventId: string; tickets: TicketType[
         {noTiersAvailable && (
           <div className="flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-700 dark:text-amber-400">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-            <span>No active ticket tier with stock — add or activate a tier (with available capacity) before sending invitations.</span>
+            <span>No active ticket tier with stock - add or activate a tier (with available capacity) before sending invitations.</span>
           </div>
         )}
 
@@ -2108,7 +2108,7 @@ function InviteTab({ eventId, tickets }: { eventId: string; tickets: TicketType[
             >
               {tierOptions.map((t) => (
                 <option key={t.id} value={t.id}>
-                  {t.name} — {t.price === 0 ? "Free" : `LKR ${t.price.toLocaleString()}`} · {t.remaining} left
+                  {t.name} - {t.price === 0 ? "Free" : `LKR ${t.price.toLocaleString()}`} · {t.remaining} left
                 </option>
               ))}
               {noTiersAvailable && <option value="">No tiers available</option>}

@@ -558,7 +558,7 @@ function QrTile({
         {url ? (
           <a href={url} target="_blank" rel="noopener noreferrer">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={url} alt={`QR code — ${label}`} className="h-32 w-32 object-contain" />
+            <img src={url} alt={`QR code - ${label}`} className="h-32 w-32 object-contain" />
           </a>
         ) : (
           <div className="flex h-32 w-32 items-center justify-center text-muted-foreground">

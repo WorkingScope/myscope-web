@@ -158,7 +158,7 @@ function OrderDetailInner() {
         {(paymentResult === "cancelled" || paymentResult === "failed") && order.status !== "Confirmed" && (
           <div className="mt-4 flex items-start gap-2 rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
             <XCircle className="mt-0.5 h-4 w-4" />
-            <span>Payment didn&apos;t complete. You can try again below — stock will be re-reserved.</span>
+            <span>Payment didn&apos;t complete. You can try again below - stock will be re-reserved.</span>
           </div>
         )}
 

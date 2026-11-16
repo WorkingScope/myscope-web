@@ -169,7 +169,7 @@ export default function OrganizerDashboardPage() {
         <KpiCard
           icon={Banknote}
           label="Pending payout"
-          value={balance ? formatLkr(balance.pending) : "—"}
+          value={balance ? formatLkr(balance.pending) : "-"}
           hint={balance ? `${(balance.platform_fee_pct * 100).toFixed(1)}% platform fee` : undefined}
         />
       </section>

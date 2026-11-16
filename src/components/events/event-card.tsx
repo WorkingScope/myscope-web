@@ -62,7 +62,7 @@ export function EventCard({ event, className }: EventCardProps) {
   const postponedLabel = isPostponed
     ? postponedTo
       ? `Postponed to ${new Date(postponedTo).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`
-      : "Postponed — new date TBA"
+      : "Postponed - new date TBA"
     : null
   const venue = event.venue_name || event.location
   const available = Number(event.tickets_available ?? 0)
@@ -255,7 +255,7 @@ export function EventCard({ event, className }: EventCardProps) {
                     <div className="font-heading text-base font-bold leading-tight text-emerald-600 dark:text-emerald-400 sm:text-xl">Free</div>
                   </div>
                 ) : (
-                  <span className="text-sm text-muted-foreground">—</span>
+                  <span className="text-sm text-muted-foreground">-</span>
                 )}
               </div>
 

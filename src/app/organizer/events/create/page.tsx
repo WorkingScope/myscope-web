@@ -61,7 +61,7 @@ const SEATING_MODES: Array<{
   {
     value: "none",
     label: "No seating",
-    description: "Tickets only — no seat assignment. Best for festivals, workshops, online events.",
+    description: "Tickets only - no seat assignment. Best for festivals, workshops, online events.",
     icon: TicketIcon,
   },
   {
@@ -282,7 +282,7 @@ export default function CreateEventPage() {
         const seen = new Set<string>()
         for (const t of tickets) {
           const n = t.name.trim()
-          if (seen.has(n)) return `Duplicate ticket name "${n}" — names must be unique in reserved-seating events.`
+          if (seen.has(n)) return `Duplicate ticket name "${n}" - names must be unique in reserved-seating events.`
           seen.add(n)
         }
       }
@@ -298,7 +298,7 @@ export default function CreateEventPage() {
       }
       // Square/grid layout: a seat map must be built and every section mapped.
       if (!builtLayout || builtLayout.total_seats === 0) {
-        return "Build your seat map — enter rows and seats for each section."
+        return "Build your seat map - enter rows and seats for each section."
       }
       const sectionNames = builtLayout.layout_data.sections.map((sec) => sec.name)
       const unmapped = sectionNames.filter((n) => sectionTicketMap[n] === undefined)
@@ -378,7 +378,7 @@ export default function CreateEventPage() {
           const ticketName = tickets[ticketIdx]?.name?.trim()
           const created = createdTickets.find((c) => c.name === ticketName)
           if (!created) {
-            setError(`Couldn't link section "${sectionName}" to a ticket type — finish the seat map from the event's edit page.`)
+            setError(`Couldn't link section "${sectionName}" to a ticket type - finish the seat map from the event's edit page.`)
             router.push("/organizer/events")
             return
           }
@@ -981,7 +981,7 @@ function TicketsStep({
                   <span className="text-sm">
                     <span className="font-medium text-foreground">Free seating tier</span>
                     <span className="block text-xs text-muted-foreground">
-                      Sold as general admission — first-come, first-served. Buyers pick a quantity instead of specific seats.
+                      Sold as general admission - first-come, first-served. Buyers pick a quantity instead of specific seats.
                     </span>
                   </span>
                 </label>
@@ -1094,7 +1094,7 @@ function SeatsStep({
             <div className="min-w-0">
               <h3 className="text-sm font-semibold text-foreground">Upload your venue layout</h3>
               <p className="mt-0.5 text-sm text-muted-foreground">
-                Outdoor concerts, multi-level halls, curved seating — upload images or a PDF of your
+                Outdoor concerts, multi-level halls, curved seating - upload images or a PDF of your
                 seating plan. Our team builds the exact seat map and you&rsquo;ll see it on this
                 event&rsquo;s edit page. The event goes on sale once the seat map is ready and approved.
               </p>
@@ -1180,7 +1180,7 @@ function SeatsStep({
               onChange={(e) => onCustomNoteChange(e.target.value)}
               rows={3}
               maxLength={2000}
-              placeholder="Describe the seating — sections, approximate rows/seats, any tiers, accessible areas…"
+              placeholder="Describe the seating - sections, approximate rows/seats, any tiers, accessible areas…"
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none"
             />
           </div>
@@ -1516,7 +1516,7 @@ function MediaStep({
       <div className="space-y-2.5">
         <FieldLabel>YouTube trailer (optional)</FieldLabel>
         <p className="-mt-1 text-xs text-muted-foreground">
-          Paste a YouTube link — watch URL, youtu.be short link, or Shorts.
+          Paste a YouTube link - watch URL, youtu.be short link, or Shorts.
           Attendees will see it as a playable video on your event page.
         </p>
         <Input
@@ -1669,18 +1669,18 @@ function ReviewStep({
       <StepHeader icon={Check} title="Review" />
 
       <ReviewBlock title="Event">
-        <Row label="Title" value={details.title || "—"} />
-        <Row label="Category" value={details.category || "—"} />
+        <Row label="Title" value={details.title || "-"} />
+        <Row label="Category" value={details.category || "-"} />
         <Row
           label="Seating"
-          value={SEATING_MODES.find((m) => m.value === details.seating_mode)?.label || "—"}
+          value={SEATING_MODES.find((m) => m.value === details.seating_mode)?.label || "-"}
         />
-        <Row label="Starts" value={details.start_time || "—"} />
-        <Row label="Ends" value={details.end_time || "—"} />
-        <Row label="Venue" value={details.venue_name || "—"} />
-        <Row label="Address" value={details.venue_address || "—"} />
-        <Row label="Location URL" value={details.venue_location_url || "—"} />
-        <Row label="Capacity" value={details.capacity || "—"} />
+        <Row label="Starts" value={details.start_time || "-"} />
+        <Row label="Ends" value={details.end_time || "-"} />
+        <Row label="Venue" value={details.venue_name || "-"} />
+        <Row label="Address" value={details.venue_address || "-"} />
+        <Row label="Location URL" value={details.venue_location_url || "-"} />
+        <Row label="Capacity" value={details.capacity || "-"} />
       </ReviewBlock>
 
       <ReviewBlock
@@ -1705,7 +1705,7 @@ function ReviewStep({
 
       {isReserved && seatChoice === "grid" && builtLayout && (
         <ReviewBlock
-          title={`Venue layout — square/grid · ${builtLayout.total_seats} seats`}
+          title={`Venue layout - square/grid · ${builtLayout.total_seats} seats`}
         >
           {builtLayout.layout_data.sections.map((section) => {
             const ticketIdx = sectionTicketMap[section.name]
@@ -1735,7 +1735,7 @@ function ReviewStep({
       )}
 
       {isReserved && seatChoice === "custom" && (
-        <ReviewBlock title={`Venue layout — custom (${customDocuments.length} document${customDocuments.length === 1 ? "" : "s"})`}>
+        <ReviewBlock title={`Venue layout - custom (${customDocuments.length} document${customDocuments.length === 1 ? "" : "s"})`}>
           <p className="py-1.5 text-sm text-muted-foreground">
             Our team will build the seat map from your uploaded documents. The event is created now and
             goes on sale once the seat map is ready and approved.

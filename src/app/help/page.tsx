@@ -3,12 +3,12 @@ import Link from "next/link"
 import Script from "next/script"
 
 export const metadata: Metadata = {
-  title: { absolute: "Help Center — MyScope Ticket Booking FAQs" },
+  title: { absolute: "Help Center - MyScope Ticket Booking FAQs" },
   description:
     "Answers to the questions we hear most: getting your e-tickets, accepted payment methods, refunds, event postponements, and how to start hosting on MyScope.",
   alternates: { canonical: "https://www.myscope.lk/help" },
   openGraph: {
-    title: "Help Center — MyScope Ticket Booking FAQs",
+    title: "Help Center - MyScope Ticket Booking FAQs",
     description:
       "Answers to the questions we hear most: getting your e-tickets, accepted payment methods, refunds, event postponements, and how to start hosting on MyScope.",
     url: "https://www.myscope.lk/help",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 const FAQS: { q: string; a: string }[] = [
   {
     q: "How do I get my tickets after booking?",
-    a: "Your e-tickets are sent to you by email and SMS as soon as your payment is confirmed. Each ticket carries a QR code you scan at the venue — no printing needed.",
+    a: "Your e-tickets are sent to you by email and SMS as soon as your payment is confirmed. Each ticket carries a QR code you scan at the venue - no printing needed.",
   },
   {
     q: "What payment methods are accepted?",

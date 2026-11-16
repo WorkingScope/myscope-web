@@ -122,7 +122,7 @@ export function ViewRow({
     <div className={cn("min-w-0", className)}>
       <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="mt-0.5 break-words text-sm text-foreground">
-        {has ? value : <span className="text-muted-foreground/60">—</span>}
+        {has ? value : <span className="text-muted-foreground/60">-</span>}
       </div>
     </div>
   )

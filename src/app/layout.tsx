@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     // "<Page> · MyScope" so the brand sticks on every tab.
     template: "%s · MyScope",
   },
-  description: "MyScope is Sri Lanka’s Smartest Ticket Booking Platform — concerts, theatre, sports, and everything in between.",
+  description: "MyScope is Sri Lanka’s Smartest Ticket Booking Platform - concerts, theatre, sports, and everything in between.",
   applicationName: "MyScope",
   // Explicit icon list — belt-and-braces alongside the app-router file
   // conventions (icon.png, apple-icon.png) in case any client looks here.
@@ -63,14 +63,14 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "MyScope",
     title: "MyScope.lk - Discover events, book tickets",
-    description: "MyScope is Sri Lanka’s Smartest Ticket Booking Platform — concerts, theatre, sports, and everything in between.",
+    description: "MyScope is Sri Lanka’s Smartest Ticket Booking Platform - concerts, theatre, sports, and everything in between.",
     images: ["/opengraph-image.png"],
     locale: "en_LK",
   },
   twitter: {
     card: "summary_large_image",
-    title: "MyScope.lk — Discover events, book tickets",
-    description: "MyScope is Sri Lanka’s Smartest Ticket Booking Platform — concerts, theatre, sports, and everything in between.",
+    title: "MyScope.lk - Discover events, book tickets",
+    description: "MyScope is Sri Lanka’s Smartest Ticket Booking Platform - concerts, theatre, sports, and everything in between.",
     images: ["/opengraph-image.png"],
   },
 };
@@ -125,7 +125,7 @@ export default function RootLayout({
               name: "MyScope",
               url: "https://www.myscope.lk",
               logo: "https://www.myscope.lk/Images/logo.png",
-              description: "MyScope is Sri Lanka’s Smartest Ticket Booking Platform — concerts, theatre, sports, and everything in between.",
+              description: "MyScope is Sri Lanka’s Smartest Ticket Booking Platform - concerts, theatre, sports, and everything in between.",
               sameAs: [
                 "https://www.facebook.com/profile.php?id=61583531460821",
                 "https://www.instagram.com/myscope.lk/",

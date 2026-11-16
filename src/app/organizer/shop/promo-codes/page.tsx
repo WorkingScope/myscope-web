@@ -322,7 +322,7 @@ export default function ShopPromoCodesPage() {
                       {c.used_count}{c.max_uses != null ? ` / ${c.max_uses}` : ""}
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">
-                      {c.min_total != null ? `LKR ${formatNumber(c.min_total)}` : "—"}
+                      {c.min_total != null ? `LKR ${formatNumber(c.min_total)}` : "-"}
                     </td>
                     <td className="px-4 py-3">
                       <Badge variant={c.active ? "success" : "outline"}>{c.active ? "Active" : "Off"}</Badge>

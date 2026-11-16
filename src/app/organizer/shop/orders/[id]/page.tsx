@@ -101,7 +101,7 @@ const TRANSITIONS: Record<FulfillmentStatus, FulfillmentStatus[]> = {
 
 function formatMoney(amount: number | string, currency = "LKR") {
   const n = typeof amount === "number" ? amount : Number(amount)
-  if (!Number.isFinite(n)) return `${currency} —`
+  if (!Number.isFinite(n)) return `${currency} -`
   return `${currency} ${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 

@@ -7,12 +7,12 @@ import EventsPageClient from "./events-client"
 // no metadata export at all and fell back to the layout's homepage defaults
 // (duplicate title/description, no canonical).
 export const metadata: Metadata = {
-  title: "Browse Events in Sri Lanka — Concerts, Theatre & Sports",
+  title: "Browse Events in Sri Lanka - Concerts, Theatre & Sports",
   description:
     "Find concerts, theatre, and sports events happening across Sri Lanka. Book tickets in a few taps with instant QR e-tickets.",
   alternates: { canonical: "https://www.myscope.lk/events" },
   openGraph: {
-    title: "Browse Events in Sri Lanka — Concerts, Theatre & Sports · MyScope",
+    title: "Browse Events in Sri Lanka - Concerts, Theatre & Sports · MyScope",
     description:
       "Find concerts, theatre, and sports events happening across Sri Lanka. Book tickets in a few taps with instant QR e-tickets.",
     url: "https://www.myscope.lk/events",

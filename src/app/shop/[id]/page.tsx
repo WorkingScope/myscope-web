@@ -73,7 +73,7 @@ interface Product {
 
 function formatMoney(amount: number | string, currency = "LKR") {
   const n = typeof amount === "number" ? amount : Number(amount)
-  if (!Number.isFinite(n)) return `${currency} —`
+  if (!Number.isFinite(n)) return `${currency} -`
   return `${currency} ${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 
@@ -286,7 +286,7 @@ export default function ProductDetailPage() {
                 </div>
                 <div className="min-w-0">
                   <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                    Event merch — from
+                    Event merch - from
                   </div>
                   <div className="truncate font-medium text-foreground">{product.event.title}</div>
                   {product.event.venue_name && (
@@ -366,7 +366,7 @@ export default function ProductDetailPage() {
                     href={`/shop/cart`}
                     className="mt-2 inline-flex items-center gap-1 text-xs text-primary hover:underline"
                   >
-                    {inCart.quantity} in cart — view cart →
+                    {inCart.quantity} in cart - view cart →
                   </Link>
                 )}
 

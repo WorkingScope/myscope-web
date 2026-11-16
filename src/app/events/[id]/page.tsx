@@ -460,7 +460,7 @@ export default function EventDetailsPage() {
          <CalendarPlus className="h-4 w-4" />
          {postponedTo
           ? `Postponed to ${new Date(postponedTo).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric" })}`
-          : "Postponed — new date to be announced"}
+          : "Postponed - new date to be announced"}
         </p>
        )}
        {dateObj && (
@@ -520,7 +520,7 @@ export default function EventDetailsPage() {
        <img
         key={activeBanner}
         src={activeBanner}
-        alt={banners.length > 1 ? `${event.title} — banner ${safeBannerIdx + 1} of ${banners.length}` : event.title}
+        alt={banners.length > 1 ? `${event.title} - banner ${safeBannerIdx + 1} of ${banners.length}` : event.title}
         className="h-full w-full object-cover"
         onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
        />
@@ -595,7 +595,7 @@ export default function EventDetailsPage() {
         <div className="relative mt-3 aspect-video overflow-hidden rounded-2xl border border-border bg-black">
          <iframe
           src={embedSrc}
-          title={`${event.title} — trailer`}
+          title={`${event.title} - trailer`}
           loading="lazy"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
@@ -676,7 +676,7 @@ export default function EventDetailsPage() {
          <CalendarPlus className="h-3.5 w-3.5" />
          {postponedTo
           ? `Postponed to ${new Date(postponedTo).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric" })}`
-          : "Postponed — new date to be announced"}
+          : "Postponed - new date to be announced"}
         </p>
        )}
 

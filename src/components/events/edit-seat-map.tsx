@@ -136,7 +136,7 @@ export function EditSeatMap({
                   <option value="">Pick a ticket type…</option>
                   {ticketTypes.map((t) => (
                     <option key={t.id} value={t.id}>
-                      {t.name}{t.price != null && ` — LKR ${Number(t.price).toLocaleString()}`}
+                      {t.name}{t.price != null && ` - LKR ${Number(t.price).toLocaleString()}`}
                     </option>
                   ))}
                 </select>

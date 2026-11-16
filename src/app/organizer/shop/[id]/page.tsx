@@ -394,7 +394,7 @@ export default function EditProductPage() {
                 <h2 className="text-lg font-semibold text-foreground">Delete permanently?</h2>
                 <p className="mt-1 text-sm text-muted-foreground">
                   <span className="font-semibold text-foreground">&ldquo;{product.title}&rdquo;</span> will be
-                  removed for good — this can&apos;t be undone. Products with past orders can&apos;t be deleted;
+                  removed for good - this can&apos;t be undone. Products with past orders can&apos;t be deleted;
                   archive them instead.
                 </p>
               </div>

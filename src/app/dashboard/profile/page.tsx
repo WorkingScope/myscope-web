@@ -146,7 +146,7 @@ function ProfileContent() {
                     type="email"
                     value={user.email || ""}
                     readOnly
-                    aria-label="Email address — cannot be changed"
+                    aria-label="Email address - cannot be changed"
                     className="h-9 w-full rounded-md border border-input bg-muted/50 pl-9 pr-9 text-sm text-muted-foreground cursor-not-allowed focus:outline-none"
                   />
                   <Lock className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/60" />

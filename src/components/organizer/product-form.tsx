@@ -216,7 +216,7 @@ export function ProductForm({
             maxLength={255}
             value={values.title}
             onChange={(e) => update("title", e.target.value)}
-            placeholder="VIP T-Shirt — Finals 2026"
+            placeholder="VIP T-Shirt - Finals 2026"
           />
         </div>
 
