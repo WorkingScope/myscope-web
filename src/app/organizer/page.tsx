@@ -4,8 +4,10 @@ import * as React from "react"
 import Link from "next/link"
 import {
   AlertCircle,
+  AlertTriangle,
   ArrowRight,
   Banknote,
+  CalendarCheck,
   CheckCircle,
   Clock,
   Loader,
@@ -74,6 +76,13 @@ const formatLkr = (n: number | string) => {
   return `LKR ${(v || 0).toLocaleString()}`
 }
 
+function greeting() {
+  const hour = new Date().getHours()
+  if (hour < 12) return "Good morning"
+  if (hour < 17) return "Good afternoon"
+  return "Good evening"
+}
+
 export default function OrganizerDashboardPage() {
   const { user, loading: authLoading } = useOrganizerGuard("/organizer")
 
@@ -127,6 +136,10 @@ export default function OrganizerDashboardPage() {
     day: "numeric",
   })
 
+  const pendingEvents = data.event_counts.pending ?? 0
+  const rejectedEvents = data.event_counts.rejected ?? 0
+  const needsAttention = pendingEvents > 0 || rejectedEvents > 0
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -136,7 +149,7 @@ export default function OrganizerDashboardPage() {
             {today}
           </p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            Welcome back, {firstName}
+            {greeting()}, {firstName}
           </h1>
         </div>
         <Button asChild>
@@ -149,6 +162,7 @@ export default function OrganizerDashboardPage() {
       {/* KPIs */}
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <KpiCard
+          feature
           icon={TrendingUp}
           label="Revenue"
           value={formatLkr(data.totals.revenue)}
@@ -173,6 +187,25 @@ export default function OrganizerDashboardPage() {
           hint={balance ? `${(balance.platform_fee_pct * 100).toFixed(1)}% platform fee` : undefined}
         />
       </section>
+
+      {/* Needs attention */}
+      {needsAttention && (
+        <section className="flex flex-wrap items-center gap-3 rounded-2xl border border-amber-300/60 bg-amber-50 p-4 dark:border-amber-900/40 dark:bg-amber-950/20">
+          <span className="inline-flex items-center gap-2 text-sm font-semibold text-amber-800 dark:text-amber-200">
+            <AlertTriangle className="h-4 w-4" /> Needs attention
+          </span>
+          {pendingEvents > 0 && (
+            <AttentionChip
+              label={`${pendingEvents} event${pendingEvents > 1 ? "s" : ""} awaiting approval`}
+            />
+          )}
+          {rejectedEvents > 0 && (
+            <AttentionChip
+              label={`${rejectedEvents} event${rejectedEvents > 1 ? "s" : ""} rejected`}
+            />
+          )}
+        </section>
+      )}
 
       {/* Events status strip */}
       <section className="rounded-2xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm">
@@ -215,30 +248,45 @@ export default function OrganizerDashboardPage() {
             <span className="text-xs text-muted-foreground">by revenue</span>
           </div>
           {data.top_events.length === 0 ? (
-            <EmptyRow text="No revenue data yet." />
+            <EmptyState
+              icon={TrendingUp}
+              title="No revenue recorded yet"
+              subtitle="Top-earning events will rank here once bookings come in."
+            />
           ) : (
             <ul className="divide-y divide-border">
-              {data.top_events.slice(0, 5).map((e, idx) => (
-                <li key={e.event_id} className="flex items-center gap-4 px-5 py-3.5">
-                  <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
-                    {idx + 1}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <Link
-                      href={`/organizer/events/${e.event_id}`}
-                      className="line-clamp-1 text-sm font-medium text-foreground transition-colors hover:text-primary"
-                    >
-                      {e.title}
-                    </Link>
-                    <div className="text-xs text-muted-foreground">
-                      {e.tickets.toLocaleString()} tickets · {e.bookings.toLocaleString()} bookings
+              {(() => {
+                const maxRevenue = Math.max(...data.top_events.slice(0, 5).map((e) => e.revenue), 1)
+                return data.top_events.slice(0, 5).map((e, idx) => (
+                  <li key={e.event_id} className="px-5 py-3.5">
+                    <div className="flex items-center gap-4">
+                      <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
+                        {idx + 1}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <Link
+                          href={`/organizer/events/${e.event_id}`}
+                          className="line-clamp-1 text-sm font-medium text-foreground transition-colors hover:text-primary"
+                        >
+                          {e.title}
+                        </Link>
+                        <div className="text-xs text-muted-foreground">
+                          {e.tickets.toLocaleString()} tickets · {e.bookings.toLocaleString()} bookings
+                        </div>
+                      </div>
+                      <div className="shrink-0 text-sm font-semibold text-foreground">
+                        {formatLkr(e.revenue)}
+                      </div>
                     </div>
-                  </div>
-                  <div className="shrink-0 text-sm font-semibold text-foreground">
-                    {formatLkr(e.revenue)}
-                  </div>
-                </li>
-              ))}
+                    <div className="ml-11 mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
+                      <div
+                        className="h-full rounded-full bg-primary"
+                        style={{ width: `${Math.max(4, (e.revenue / maxRevenue) * 100)}%` }}
+                      />
+                    </div>
+                  </li>
+                ))
+              })()}
             </ul>
           )}
         </div>
@@ -250,7 +298,11 @@ export default function OrganizerDashboardPage() {
             <span className="text-xs text-muted-foreground">latest 5</span>
           </div>
           {data.recent_bookings.length === 0 ? (
-            <EmptyRow text="No bookings yet." />
+            <EmptyState
+              icon={CalendarCheck}
+              title="No bookings yet"
+              subtitle="New bookings across your events will show up here as they come in."
+            />
           ) : (
             <ul className="divide-y divide-border">
               {data.recent_bookings.slice(0, 5).map((b) => (
@@ -310,22 +362,68 @@ function KpiCard({
   label,
   value,
   hint,
+  feature,
 }: {
   icon: React.ComponentType<{ className?: string }>
   label: string
   value: string | number
   hint?: string
+  /** Elevates this card in solid primary fill as the headline metric. */
+  feature?: boolean
 }) {
   return (
-    <div className="rounded-2xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-4 sm:p-5">
-      <div className="flex items-center gap-2 text-muted-foreground">
+    <div
+      className={
+        feature
+          ? "rounded-2xl bg-primary p-4 text-primary-foreground sm:p-5"
+          : "rounded-2xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-4 sm:p-5"
+      }
+    >
+      <div className={`flex items-center gap-2 ${feature ? "text-primary-foreground/75" : "text-muted-foreground"}`}>
         <Icon className="h-3.5 w-3.5 shrink-0" />
         <span className="text-[10px] sm:text-xs font-medium uppercase tracking-wider truncate">{label}</span>
       </div>
       {/* truncate guards against long currency strings (e.g. "LKR 12,345,678")
           breaking the 2-col mobile layout. */}
-      <div className="mt-2 truncate text-xl sm:text-2xl font-bold leading-tight text-foreground">{value}</div>
-      {hint && <p className="mt-1 truncate text-[11px] sm:text-xs text-muted-foreground">{hint}</p>}
+      <div className="mt-2 truncate text-xl sm:text-2xl font-bold leading-tight">{value}</div>
+      {hint && (
+        <p className={`mt-1 truncate text-[11px] sm:text-xs ${feature ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+          {hint}
+        </p>
+      )}
+    </div>
+  )
+}
+
+function AttentionChip({ label }: { label: string }) {
+  return (
+    <Link
+      href="/organizer/events"
+      className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/60 bg-card px-3 py-1 text-xs font-semibold text-amber-800 transition hover:bg-amber-100 dark:border-amber-900/50 dark:text-amber-200 dark:hover:bg-amber-900/40"
+    >
+      {label} <ArrowRight className="h-3 w-3" />
+    </Link>
+  )
+}
+
+/** Illustrated empty state for a dashboard section — matches the dashed-border
+ *  + circular icon badge idiom used on the Events page. */
+function EmptyState({
+  icon: Icon,
+  title,
+  subtitle,
+}: {
+  icon: React.ComponentType<{ className?: string }>
+  title: string
+  subtitle: string
+}) {
+  return (
+    <div className="flex flex-col items-center gap-3 p-10 text-center">
+      <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
+        <Icon className="h-5 w-5" />
+      </span>
+      <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+      <p className="max-w-sm text-xs text-muted-foreground">{subtitle}</p>
     </div>
   )
 }
@@ -355,9 +453,5 @@ function BalanceMetric({
       </div>
     </div>
   )
-}
-
-function EmptyRow({ text }: { text: string }) {
-  return <div className="p-8 text-center text-sm text-muted-foreground">{text}</div>
 }
 
