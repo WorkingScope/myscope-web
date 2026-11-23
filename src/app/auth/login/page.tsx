@@ -67,6 +67,7 @@ function LoginPageInner() {
             width={160}
             height={48}
             className="h-12 w-auto"
+            style={{ width: "auto" }}
             priority
           />
           <h1 className="text-3xl font-bold tracking-tight text-violet-900 dark:text-white">

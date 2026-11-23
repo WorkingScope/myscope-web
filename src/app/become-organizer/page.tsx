@@ -241,6 +241,7 @@ export default function BecomeOrganizerPage() {
             width={240}
             height={72}
             className="h-20 w-auto object-contain"
+            style={{ width: "auto" }}
             priority
           />
         </div>

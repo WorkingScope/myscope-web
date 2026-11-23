@@ -25,6 +25,7 @@ export function FooterLogo({ className }: { className?: string }) {
       width={275}
       height={80}
       className={className}
+      style={{ width: "auto" }}
     />
   )
 }

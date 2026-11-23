@@ -87,6 +87,7 @@ export function SiteHeader() {
             width={275}
             height={80}
             className="h-14 w-auto"
+            style={{ width: "auto" }}
             priority
           />
         </Link>
@@ -218,6 +219,7 @@ export function SiteHeader() {
                   width={120}
                   height={40}
                   className="h-9 w-auto"
+                  style={{ width: "auto" }}
                 />
               </Link>
               <button

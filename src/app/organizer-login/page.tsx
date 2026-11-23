@@ -92,6 +92,7 @@ export default function OrganizerLoginPage() {
             width={160}
             height={48}
             className="h-12 w-auto"
+            style={{ width: "auto" }}
             priority
           />
           <span className="rounded-full border border-border px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">

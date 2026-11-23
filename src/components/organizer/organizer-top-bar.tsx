@@ -42,6 +42,7 @@ export function OrganizerTopBar() {
             width={165}
             height={48}
             className="h-8 w-auto"
+            style={{ width: "auto" }}
             priority
           />
           <span className="hidden rounded-full border border-border px-2 py-0.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground sm:inline">

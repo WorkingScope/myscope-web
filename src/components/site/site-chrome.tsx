@@ -58,8 +58,13 @@ export function SiteChrome({
   }, [])
 
   const isOrganizer = isOrganizerHost || (pathname?.startsWith("/organizer") ?? false)
+  // /scanner routes are kiosk-style door-staff tools (camera scanner, and the
+  // keyboard-wedge scan desk) — they get their own full-screen UI, same as
+  // organizer routes, so a wandering tap can't navigate a shared venue PC
+  // back to the marketing site mid-event.
+  const isKiosk = isOrganizer || (pathname?.startsWith("/scanner") ?? false)
 
-  if (isOrganizer) {
+  if (isKiosk) {
     return <main className="min-h-screen">{children}</main>
   }
 
