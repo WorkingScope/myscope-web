@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { AlertCircle, Loader } from "lucide-react"
 import { useGoogleLogin } from "@react-oauth/google"
 import { useAuth } from "@/context/AuthContext"
+import { useTheme } from "@/components/theme/theme-provider"
 
 function GoogleIcon() {
   return (
@@ -34,9 +35,16 @@ function LoginPageInner() {
   const searchParams = useSearchParams()
   const redirect = searchParams?.get("redirect") || "/"
   const { googleLoginWithAccessToken } = useAuth()
+  const { resolvedTheme } = useTheme()
 
   const [error, setError] = React.useState("")
   const [loading, setLoading] = React.useState(false)
+  const [mounted, setMounted] = React.useState(false)
+  React.useEffect(() => setMounted(true), [])
+  const logoSrc =
+    mounted && resolvedTheme === "dark"
+      ? "/Images/navbar_logo_dark.png"
+      : "/Images/navbar_logo_light.png"
 
   const signIn = useGoogleLogin({
     onSuccess: async ({ access_token }) => {
@@ -62,17 +70,14 @@ function LoginPageInner() {
         {/* Brand */}
         <div className="mb-8 flex flex-col items-center gap-2">
           <Image
-            src="/Images/logo.png"
+            src={logoSrc}
             alt="MyScope"
-            width={160}
-            height={48}
-            className="h-12 w-auto"
+            width={275}
+            height={80}
+            className="h-28 w-auto"
             style={{ width: "auto" }}
             priority
           />
-          <h1 className="text-3xl font-bold tracking-tight text-violet-900 dark:text-white">
-            MyScope
-          </h1>
           <p className="text-sm text-muted-foreground">Sign in or create your account</p>
         </div>
 

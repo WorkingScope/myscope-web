@@ -78,6 +78,47 @@
   --sidebar-ring: oklch(0.606 0.25 292.717 / 55%);
 }
 
+/* Organizer portal surface override — scoped to .organizer-scope (applied by
+   OrganizerShell + the organizer login page) so the consumer site is
+   untouched. Brand violet (--primary/--ring/etc.) stays the same; only the
+   page/card/border surfaces change:
+   · Light: background and card were IDENTICAL pure white site-wide, which is
+     fine for the simple consumer pages but means shadow-only dashboard cards
+     (no border) had nothing to contrast against. Give the organizer portal a
+     faint neutral page tint so white cards actually read as elevated.
+   · Dark: swap the violet-tinted dark surfaces for a neutral near-black
+     (not brand-tinted) — closer to a dedicated "workspace" feel, matching
+     the reference admin portal's dark mode, and gives card/background enough
+     separation for the ring-based elevation to be visible. */
+.organizer-scope {
+  --background: oklch(0.969 0.003 264);
+  --card: oklch(1 0 0);
+  --popover: oklch(1 0 0);
+  --border: oklch(0.906 0.004 264);
+  --muted: oklch(0.955 0.003 264);
+  --muted-foreground: oklch(0.513 0.007 264);
+  --sidebar: oklch(1 0 0);
+  --sidebar-border: oklch(0.906 0.004 264);
+}
+
+.dark .organizer-scope {
+  --background: oklch(0.207 0.003 264);
+  --foreground: oklch(0.925 0.004 264);
+  --card: oklch(0.267 0.004 264);
+  --card-foreground: oklch(0.925 0.004 264);
+  --popover: oklch(0.267 0.004 264);
+  --popover-foreground: oklch(0.925 0.004 264);
+  --border: oklch(0.36 0.004 264);
+  --input: oklch(0.36 0.004 264);
+  --muted: oklch(0.32 0.004 264);
+  --muted-foreground: oklch(0.72 0.006 264);
+  --sidebar: oklch(0.207 0.003 264);
+  --sidebar-foreground: oklch(0.925 0.004 264);
+  --sidebar-accent: oklch(0.32 0.004 264);
+  --sidebar-accent-foreground: oklch(0.925 0.004 264);
+  --sidebar-border: oklch(0.36 0.004 264);
+}
+
 /* Custom scrollbar — uses tokens so it adapts to both modes. */
 ::-webkit-scrollbar {
   width: 8px;

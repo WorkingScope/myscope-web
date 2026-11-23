@@ -36,19 +36,19 @@ export function OrganizerShell({ children }: { children: React.ReactNode }) {
     href === "/organizer" ? pathname === "/organizer" : pathname.startsWith(href)
 
   return (
-    <>
+    <div className="organizer-scope min-h-screen bg-background">
     <OrganizerTopBar />
-    <div className="mx-auto flex w-full max-w-7xl gap-6 px-4 py-6 sm:px-6 sm:py-10">
+    <div className="mx-auto flex w-full max-w-[1600px] gap-6 px-4 py-6 sm:px-6 sm:py-10">
       {/* Desktop sidebar */}
       <aside className="hidden w-60 shrink-0 md:block">
         <div className="sticky top-20 space-y-3">
-          <div className="rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm px-4 py-3 shadow-xs">
+          <div className="rounded-xl bg-card px-4 py-3 shadow-sm dark:ring-1 dark:ring-white/10">
             <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Organizer
             </div>
             <div className="text-sm font-semibold text-foreground">Workspace</div>
           </div>
-          <nav className="space-y-1 rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-2 shadow-xs">
+          <nav className="space-y-1 rounded-xl bg-card p-2 shadow-sm dark:ring-1 dark:ring-white/10">
             {MENU.map((item) => {
               const Icon = item.icon
               const active = isActive(item.href)
@@ -127,6 +127,6 @@ export function OrganizerShell({ children }: { children: React.ReactNode }) {
 
       <div className="min-w-0 flex-1">{children}</div>
     </div>
-    </>
+    </div>
   )
 }

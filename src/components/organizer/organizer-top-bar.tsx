@@ -34,7 +34,7 @@ export function OrganizerTopBar() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/65">
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-3 px-4 sm:px-6">
+      <div className="mx-auto flex h-16 w-full max-w-[1600px] items-center gap-3 px-4 sm:px-6">
         <Link href="/organizer" className="flex shrink-0 items-center gap-2" aria-label="Organizer dashboard home">
           <Image
             src="/Images/navbar_logo.png"

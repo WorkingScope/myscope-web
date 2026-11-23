@@ -249,99 +249,105 @@ export default function OrganizerEventsPage() {
         </Button>
       </div>
 
-      {/* Upcoming / Past toggle — drives the API call. "Past" hides events
-          that have already happened from public listings but keeps them here
-          so organizers can pull analytics, reuse templates, or re-list. */}
-      <div className="inline-flex rounded-lg border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-1 shadow-xs">
-        <button
-          type="button"
-          onClick={() => {
-            setViewMode("upcoming")
-            setStatusFilter("all")
-          }}
-          className={cn(
-            "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-            viewMode === "upcoming"
-              ? "bg-primary/10 text-primary"
-              : "text-muted-foreground hover:bg-muted hover:text-foreground",
-          )}
-        >
-          <Calendar className="h-3.5 w-3.5" />
-          Upcoming
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            setViewMode("past")
-            setStatusFilter("all")
-          }}
-          className={cn(
-            "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-            viewMode === "past"
-              ? "bg-primary/10 text-primary"
-              : "text-muted-foreground hover:bg-muted hover:text-foreground",
-          )}
-        >
-          <Archive className="h-3.5 w-3.5" />
-          Past events
-          {pastCount !== null && pastCount > 0 && (
-            <span
-              className={cn(
-                "rounded-full px-1.5 py-0.5 text-[10px] font-semibold",
-                viewMode === "past" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground",
-              )}
-            >
-              {pastCount}
-            </span>
-          )}
-        </button>
-      </div>
-
-      {/* Status tabs — only meaningful for upcoming events. For past events
-          everything is by definition "Live" (otherwise it wouldn't have run),
-          so the filter row would just be noise. */}
-      {viewMode === "upcoming" && (
-      <div className="flex flex-wrap gap-1.5 rounded-lg border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-1.5 shadow-xs">
-        {STATUS_FILTERS.map((f) => {
-          const active = statusFilter === f.value
-          const n = counts[f.value] ?? 0
-          return (
+      {/* Toolbar — view toggle, search, and (for upcoming) status filters all
+          grouped into one panel instead of three separate floating rows. */}
+      <div className="rounded-xl bg-card p-3 shadow-sm dark:ring-1 dark:ring-white/10">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          {/* Upcoming / Past toggle — drives the API call. "Past" hides events
+              that have already happened from public listings but keeps them
+              here so organizers can pull analytics, reuse templates, or re-list. */}
+          <div className="inline-flex shrink-0 rounded-lg bg-muted p-1">
             <button
-              key={f.value}
               type="button"
-              onClick={() => setStatusFilter(f.value)}
+              onClick={() => {
+                setViewMode("upcoming")
+                setStatusFilter("all")
+              }}
               className={cn(
                 "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-                active
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                viewMode === "upcoming"
+                  ? "bg-card text-primary shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
-              {f.label}
-              <span
-                className={cn(
-                  "rounded-full px-1.5 py-0.5 text-[10px] font-semibold",
-                  active ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground",
-                )}
-              >
-                {n}
-              </span>
+              <Calendar className="h-3.5 w-3.5" />
+              Upcoming
             </button>
-          )
-        })}
-      </div>
-      )}
+            <button
+              type="button"
+              onClick={() => {
+                setViewMode("past")
+                setStatusFilter("all")
+              }}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                viewMode === "past"
+                  ? "bg-card text-primary shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <Archive className="h-3.5 w-3.5" />
+              Past events
+              {pastCount !== null && pastCount > 0 && (
+                <span
+                  className={cn(
+                    "rounded-full px-1.5 py-0.5 text-[10px] font-semibold",
+                    viewMode === "past" ? "bg-primary/15 text-primary" : "bg-background text-muted-foreground",
+                  )}
+                >
+                  {pastCount}
+                </span>
+              )}
+            </button>
+          </div>
 
-      {/* Search */}
-      <div className="relative">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <input
-          type="search"
-          placeholder="Search your events…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="h-10 w-full rounded-lg border border-border bg-card/30 pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground backdrop-blur-md transition-colors focus:border-primary/50 focus:bg-card/50 focus:outline-none"
-        />
+          {/* Search */}
+          <div className="relative sm:w-72">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="search"
+              placeholder="Search your events…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="h-9 w-full rounded-lg bg-muted pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40"
+            />
+          </div>
+        </div>
+
+        {/* Status filters — only meaningful for upcoming events. For past
+            events everything is by definition "Live" (otherwise it wouldn't
+            have run), so the filter row would just be noise. */}
+        {viewMode === "upcoming" && (
+          <div className="mt-3 flex flex-wrap gap-1.5 border-t border-border pt-3">
+            {STATUS_FILTERS.map((f) => {
+              const active = statusFilter === f.value
+              const n = counts[f.value] ?? 0
+              return (
+                <button
+                  key={f.value}
+                  type="button"
+                  onClick={() => setStatusFilter(f.value)}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium transition-colors",
+                    active
+                      ? "bg-primary/10 text-primary"
+                      : "bg-muted text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  {f.label}
+                  <span
+                    className={cn(
+                      "rounded-full px-1.5 py-0.5 text-[10px] font-semibold",
+                      active ? "bg-primary/15 text-primary" : "bg-background text-muted-foreground",
+                    )}
+                  >
+                    {n}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* Error */}
@@ -433,10 +439,11 @@ function OrganizerEventRow({
   const canSubmit = event.approval_status === "draft" || event.approval_status === "rejected"
 
   return (
-    <li className="overflow-hidden rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm shadow-xs">
+    <li className="overflow-hidden rounded-xl bg-card shadow-sm dark:ring-1 dark:ring-white/10">
       <div className="flex flex-col gap-0 sm:flex-row">
-        {/* Banner thumbnail */}
-        <div className="relative aspect-21/9 w-full shrink-0 overflow-hidden bg-muted sm:aspect-auto sm:h-auto sm:w-40">
+        {/* Banner thumbnail — status badge overlaid in the corner so the
+            content side can lead with the title instead of a badge row. */}
+        <div className="relative aspect-21/9 w-full shrink-0 overflow-hidden bg-muted sm:aspect-auto sm:h-auto sm:w-44">
           {event.banner_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -450,30 +457,35 @@ function OrganizerEventRow({
               <Ticket className="h-8 w-8" />
             </div>
           )}
-        </div>
-
-        {/* Content */}
-        <div className="flex flex-1 flex-col gap-3 p-4 sm:py-5 sm:pr-5">
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="absolute left-2 top-2">
             <Badge variant={meta.variant}>
               <Icon className="h-3 w-3" />
               {meta.label}
             </Badge>
-            {event.category && (
-              <Badge variant="outline" className="capitalize">
-                {event.category}
-              </Badge>
-            )}
-            {event.seating_mode && event.seating_mode !== "none" && (
-              <Badge variant="outline">
-                {SEATING_MODE_LABEL[event.seating_mode]}
-              </Badge>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex flex-1 flex-col gap-2.5 p-4 sm:py-5 sm:pr-5">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <h3 className="text-base font-semibold leading-tight text-foreground sm:text-lg">
+              {event.title}
+            </h3>
+            {(event.category || (event.seating_mode && event.seating_mode !== "none")) && (
+              <div className="flex shrink-0 flex-wrap items-center gap-1.5">
+                {event.category && (
+                  <Badge variant="outline" className="capitalize">
+                    {event.category}
+                  </Badge>
+                )}
+                {event.seating_mode && event.seating_mode !== "none" && (
+                  <Badge variant="outline">
+                    {SEATING_MODE_LABEL[event.seating_mode]}
+                  </Badge>
+                )}
+              </div>
             )}
           </div>
-
-          <h3 className="text-base font-semibold leading-tight text-foreground sm:text-lg">
-            {event.title}
-          </h3>
 
           <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
             {dateObj && (

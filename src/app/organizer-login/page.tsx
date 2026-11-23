@@ -7,6 +7,7 @@ import { AlertCircle, Loader } from "lucide-react"
 import { useGoogleLogin } from "@react-oauth/google"
 import { useAuth } from "@/context/AuthContext"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
+import { useTheme } from "@/components/theme/theme-provider"
 import { ORGANIZER_ROLES } from "@/hooks/useOrganizerGuard"
 
 // Served at organizer.myscope.lk/login (middleware.ts rewrites it here) — the
@@ -36,9 +37,16 @@ function GoogleIcon() {
 export default function OrganizerLoginPage() {
   const router = useRouter()
   const { googleLoginWithAccessToken } = useAuth()
+  const { resolvedTheme } = useTheme()
 
   const [error, setError] = React.useState("")
   const [loading, setLoading] = React.useState(false)
+  const [mounted, setMounted] = React.useState(false)
+  React.useEffect(() => setMounted(true), [])
+  const logoSrc =
+    mounted && resolvedTheme === "dark"
+      ? "/Images/navbar_logo_dark.png"
+      : "/Images/navbar_logo_light.png"
 
   const signIn = useGoogleLogin({
     onSuccess: async ({ access_token }) => {
@@ -78,7 +86,7 @@ export default function OrganizerLoginPage() {
     // through, same atmosphere as the rest of the site. No top bar here; just
     // a theme toggle in the corner since this standalone page has no other
     // access to one.
-    <div className="relative flex min-h-screen w-full items-center justify-center px-4 py-8">
+    <div className="organizer-scope relative flex min-h-screen w-full items-center justify-center bg-background px-4 py-8">
       <div className="absolute right-4 top-4">
         <ThemeToggle />
       </div>
@@ -87,11 +95,11 @@ export default function OrganizerLoginPage() {
 
         <div className="mb-8 flex flex-col items-center gap-3">
           <Image
-            src="/Images/logo.png"
+            src={logoSrc}
             alt="MyScope"
-            width={160}
-            height={48}
-            className="h-12 w-auto"
+            width={275}
+            height={80}
+            className="h-28 w-auto"
             style={{ width: "auto" }}
             priority
           />

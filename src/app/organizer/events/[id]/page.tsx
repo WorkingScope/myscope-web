@@ -22,6 +22,7 @@ import {
   Minus,
   PauseCircle,
   PlayCircle,
+  Percent,
   Plus,
   QrCode,
   RefreshCw,
@@ -38,7 +39,18 @@ import { EventCommunicationsCard } from "@/components/events/event-communication
 import { useOrganizerGuard } from "@/hooks/useOrganizerGuard"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { cn } from "@/lib/utils"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
@@ -366,75 +378,78 @@ export default function OrganizerEventControlPage() {
   const canEdit = ["draft", "pending", "approved", "rejected"].includes(event.approval_status)
 
   return (
-    <div className="space-y-6">
-      <Link
-        href="/organizer/events"
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="h-4 w-4" /> Back to events
-      </Link>
-
+    <div className="space-y-5">
       {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge variant={STATUS_VARIANT[event.approval_status]}>
-              {event.approval_status === "approved" ? "Live" : event.approval_status}
-            </Badge>
-            {event.postponed && (
-              <Badge variant="warning">
-                Postponed{event.postponed_to ? ` to ${new Date(event.postponed_to).toLocaleDateString()}` : " (date TBA)"}
-              </Badge>
-            )}
-            {event.seating_mode && event.seating_mode !== "none" && (
-              <Badge variant="outline">{event.seating_mode}</Badge>
+      <div className="rounded-2xl bg-card p-4 shadow-sm dark:ring-1 dark:ring-white/10 sm:p-5">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex min-w-0 gap-3.5">
+          {/* Banner thumbnail */}
+          <div className="relative hidden h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-muted sm:block">
+            {event.banner_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={event.banner_url} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-primary/15 via-primary/5 to-secondary text-primary/60">
+                <Ticket className="h-6 w-6" />
+              </div>
             )}
           </div>
-          <h1 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            {event.title}
-          </h1>
-          <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-            {when && (
-              <span className="inline-flex items-center gap-1.5">
-                <Calendar className="h-3.5 w-3.5" /> {formatWhen(when)}
-              </span>
-            )}
-            {event.venue_name && (
-              <span className="inline-flex items-center gap-1.5">
-                <MapPin className="h-3.5 w-3.5" /> {event.venue_name}
-              </span>
-            )}
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant={STATUS_VARIANT[event.approval_status]}>
+                {event.approval_status === "approved" ? "Live" : event.approval_status}
+              </Badge>
+              {event.postponed && (
+                <Badge variant="warning">
+                  Postponed{event.postponed_to ? ` to ${new Date(event.postponed_to).toLocaleDateString()}` : " (date TBA)"}
+                </Badge>
+              )}
+              {event.seating_mode && event.seating_mode !== "none" && (
+                <Badge variant="outline">{event.seating_mode}</Badge>
+              )}
+            </div>
+            <h1 className="mt-1.5 text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+              {event.title}
+            </h1>
+            <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+              {when && (
+                <span className="inline-flex items-center gap-1.5">
+                  <Calendar className="h-3.5 w-3.5" /> {formatWhen(when)}
+                </span>
+              )}
+              {event.venue_name && (
+                <span className="inline-flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5" /> {event.venue_name}
+                </span>
+              )}
+            </div>
           </div>
         </div>
-        <div className="flex shrink-0 flex-wrap gap-2">
-          {canEdit && (
-            <Button asChild variant="outline" size="sm">
-              <Link href={`/organizer/events/${eventId}/edit`}>
-                <Edit3 /> Edit event
-              </Link>
-            </Button>
-          )}
-          {/* Live-event controls — pause/resume sales + cancel. Only visible
-              for approved events; everything else is too early or too late
-              for these actions to make sense. */}
+
+        {/* Actions — primary Edit action is visually distinct from the
+            secondary live-event controls, which are grouped in their own
+            cluster so the two kinds of action don't blur together. */}
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
           {event.approval_status === "approved" && (
-            <>
+            <div className="flex items-center gap-1 rounded-lg bg-muted p-1">
               {salesPaused ? (
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   onClick={() => toggleSales(true)}
                   disabled={headerBusy !== null}
+                  className="hover:bg-card hover:shadow-sm"
                 >
                   {headerBusy === "resume" ? <Loader className="animate-spin" /> : <PlayCircle />}
                   Resume sales
                 </Button>
               ) : (
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   onClick={() => toggleSales(false)}
                   disabled={headerBusy !== null}
+                  className="hover:bg-card hover:shadow-sm"
                 >
                   {headerBusy === "pause" ? <Loader className="animate-spin" /> : <PauseCircle />}
                   Pause sales
@@ -442,32 +457,42 @@ export default function OrganizerEventControlPage() {
               )}
               {event.postponed ? (
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   onClick={unpostponeEvent}
                   disabled={headerBusy !== null}
+                  className="hover:bg-card hover:shadow-sm"
                 >
                   {headerBusy === "unpostpone" ? <Loader className="animate-spin" /> : <RotateCcw />}
                   Undo postpone
                 </Button>
               ) : (
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   onClick={() => setPostponeOpen(true)}
                   disabled={headerBusy !== null}
+                  className="hover:bg-card hover:shadow-sm"
                 >
                   <CalendarClock />
                   Postpone
                 </Button>
               )}
-            </>
+            </div>
+          )}
+          {canEdit && (
+            <Button asChild size="sm">
+              <Link href={`/organizer/events/${eventId}/edit`}>
+                <Edit3 /> Edit event
+              </Link>
+            </Button>
           )}
         </div>
       </div>
 
       {headerMsg && (
-        headerMsg.tone === "ok" ? (
+        <div className="mt-3">
+        {headerMsg.tone === "ok" ? (
           <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">{headerMsg.text}</p>
         ) : (
           <div className={cn(
@@ -478,8 +503,10 @@ export default function OrganizerEventControlPage() {
           )}>
             {headerMsg.text}
           </div>
-        )
+        )}
+        </div>
       )}
+      </div>
 
       {postponeOpen && (
         <PostponeModal
@@ -495,28 +522,32 @@ export default function OrganizerEventControlPage() {
         />
       )}
 
-      {/* Tab bar */}
-      <div className="flex flex-wrap gap-1 rounded-lg border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-1 shadow-xs">
-        {TABS.map((t) => {
-          const Icon = t.icon
-          const active = tab === t.value
-          return (
-            <button
-              key={t.value}
-              type="button"
-              onClick={() => setTab(t.value)}
-              className={cn(
-                "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-                active
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
-              )}
-            >
-              <Icon className="h-3.5 w-3.5" />
-              {t.label}
-            </button>
-          )
-        })}
+      {/* Tab bar — single-row scroll instead of wrap, so nine tabs never
+          produce a ragged last line and every tab gets identical styling
+          regardless of how many fit before the fold. */}
+      <div className="overflow-x-auto rounded-lg bg-card shadow-sm dark:ring-1 dark:ring-white/10">
+        <div className="flex w-max min-w-full gap-1 p-1">
+          {TABS.map((t) => {
+            const Icon = t.icon
+            const active = tab === t.value
+            return (
+              <button
+                key={t.value}
+                type="button"
+                onClick={() => setTab(t.value)}
+                className={cn(
+                  "inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                  active
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                )}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                {t.label}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {/* Tab content. Each tab is its own component that fetches lazily on
@@ -646,7 +677,7 @@ function OverviewTab({ eventId }: { eventId: string }) {
 
       {/* Invitations — small standalone tile so it doesn't crowd the headline
           row when the organizer hasn't used the Invite tab yet. */}
-      <div className="rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-4 shadow-xs">
+      <div className="rounded-xl bg-card shadow-sm dark:ring-1 dark:ring-white/10 p-4">
         <div className="flex items-center justify-between gap-3">
           <div>
             <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Invitations</div>
@@ -669,7 +700,7 @@ function OverviewTab({ eventId }: { eventId: string }) {
 
       {/* Per-tier sold + revenue breakdown — pulled from /analytics response. */}
       {data.ticket_types && data.ticket_types.length > 0 && (
-        <section className="rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm shadow-xs">
+        <section className="rounded-xl bg-card shadow-sm dark:ring-1 dark:ring-white/10">
           <div className="border-b border-border p-4">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <BarChart2 className="h-4 w-4 text-primary" /> Ticket-type breakdown
@@ -735,7 +766,7 @@ function BigStat({
     warning: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
   }[tone]
   return (
-    <div className="rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-5 shadow-xs">
+    <div className="rounded-xl bg-card shadow-sm dark:ring-1 dark:ring-white/10 p-5">
       <div className="flex items-start justify-between">
         <div>
           <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</div>
@@ -761,27 +792,46 @@ function TicketsTab({ tickets }: { tickets: TicketType[] | null }) {
   }
 
   return (
-    <ul className="space-y-2">
-      {tickets.map(t => {
-        const sold = t.quantity_sold ?? 0
-        const total = t.quantity_total ?? 0
-        const pct = total > 0 ? Math.round((sold / total) * 100) : 0
-        return (
-          <li key={t.id} className="rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-4">
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <div className="min-w-0">
-                <div className="font-semibold text-foreground">{t.name}</div>
-                <div className="text-xs text-muted-foreground">{formatLkr(t.price)} · {sold} of {total} sold</div>
-              </div>
-              {t.is_active === false && <Badge variant="outline">Inactive</Badge>}
-            </div>
-            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-              <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
-            </div>
-          </li>
-        )
-      })}
-    </ul>
+    <div className="rounded-2xl bg-card shadow-sm dark:ring-1 dark:ring-white/10">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Ticket type</TableHead>
+            <TableHead>Price</TableHead>
+            <TableHead>Sold</TableHead>
+            <TableHead className="text-right">Status</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {tickets.map((t) => {
+            const sold = t.quantity_sold ?? 0
+            const total = t.quantity_total ?? 0
+            const pct = total > 0 ? Math.min(100, Math.round((sold / total) * 100)) : 0
+            return (
+              <TableRow key={t.id}>
+                <TableCell>
+                  <div className="font-medium text-foreground">{t.name}</div>
+                  <div className="mt-1.5 h-1.5 w-32 max-w-full overflow-hidden rounded-full bg-muted">
+                    <div className="h-full rounded-full bg-primary" style={{ width: `${Math.max(4, pct)}%` }} />
+                  </div>
+                </TableCell>
+                <TableCell className="text-sm text-foreground">{formatLkr(t.price)}</TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  {sold} of {total} <span className="text-xs">({pct}%)</span>
+                </TableCell>
+                <TableCell className="text-right">
+                  {t.is_active === false ? (
+                    <Badge variant="outline">Inactive</Badge>
+                  ) : (
+                    <Badge variant="success">Active</Badge>
+                  )}
+                </TableCell>
+              </TableRow>
+            )
+          })}
+        </TableBody>
+      </Table>
+    </div>
   )
 }
 
@@ -795,6 +845,7 @@ function AttendeesTab({ eventId }: { eventId: string }) {
   const [busyId, setBusyId] = React.useState<string | null>(null)
   const [actionMsg, setActionMsg] = React.useState<{ id: string; text: string; tone: "ok" | "err" } | null>(null)
   const [search, setSearch] = React.useState("")
+  const [resendTarget, setResendTarget] = React.useState<BookingRow | null>(null)
 
   const fetchBookings = React.useCallback(async () => {
     try {
@@ -887,7 +938,7 @@ function AttendeesTab({ eventId }: { eventId: string }) {
           const anyCheckedIn = checkedTickets > 0 || !!b.checked_in_at
           const msg = actionMsg?.id === b.id ? actionMsg : null
           return (
-            <li key={b.id} className="flex flex-col gap-3 rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-4 sm:flex-row sm:items-start sm:justify-between">
+            <li key={b.id} className="flex flex-col gap-3 rounded-xl bg-card shadow-sm dark:ring-1 dark:ring-white/10 p-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-semibold text-foreground">{name}</span>
@@ -926,7 +977,7 @@ function AttendeesTab({ eventId }: { eventId: string }) {
                 )}
               </div>
               <div className="flex shrink-0 gap-2">
-                <Button variant="outline" size="sm" onClick={() => resend(b)} disabled={busyId === b.id}>
+                <Button variant="outline" size="sm" onClick={() => setResendTarget(b)} disabled={busyId === b.id}>
                   {busyId === b.id ? <Loader className="animate-spin" /> : <Send />}
                   Resend
                 </Button>
@@ -939,6 +990,39 @@ function AttendeesTab({ eventId }: { eventId: string }) {
           )
         })}
       </ul>
+
+      {/* Resend confirmation — avoids accidentally re-sending a ticket email/SMS
+          from a stray tap on a list that can have dozens of rows. */}
+      <AlertDialog open={resendTarget !== null} onOpenChange={(open) => { if (!open) setResendTarget(null) }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Resend ticket?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {resendTarget && (
+                <>
+                  This will resend the ticket email/SMS to{" "}
+                  <span className="font-medium text-foreground">
+                    {resendTarget.attendee_info?.name || resendTarget.guest_name || "this attendee"}
+                  </span>{" "}
+                  ({resendTarget.attendee_info?.email || resendTarget.guest_email || "no email on file"}).
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setResendTarget(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault()
+                if (resendTarget) resend(resendTarget)
+                setResendTarget(null)
+              }}
+            >
+              <Send /> Resend
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
@@ -1006,7 +1090,7 @@ function CheckinTab({ eventId }: { eventId: string }) {
             {gates.map(g => {
               const share = totalScanned > 0 ? Math.round((g.scanned / totalScanned) * 100) : 0
               return (
-                <li key={g.label} className="rounded-lg border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-3">
+                <li key={g.label} className="rounded-lg bg-card shadow-sm dark:ring-1 dark:ring-white/10 p-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-foreground">{g.label}</span>
                     <span className="text-sm font-semibold text-foreground">
@@ -1026,19 +1110,33 @@ function CheckinTab({ eventId }: { eventId: string }) {
       <div>
         <h3 className="mb-2 text-sm font-semibold text-foreground">Recent check-ins</h3>
         {data.recent.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No check-ins yet.</p>
+          <EmptyHint icon={CheckCircle2} text="No check-ins yet." />
         ) : (
-          <ul className="space-y-2">
-            {data.recent.map(r => (
-              <li key={r.id} className="flex items-center justify-between rounded-lg border border-border bg-transparent px-4 py-2 text-sm">
-                <div className="min-w-0">
-                  <div className="truncate font-medium text-foreground">{r.name || "-"}</div>
-                  <div className="text-xs font-mono text-muted-foreground">{r.booking_reference} · {r.number_of_tickets} ticket(s)</div>
-                </div>
-                <div className="shrink-0 text-xs text-muted-foreground">{r.checked_in_at ? new Date(r.checked_in_at).toLocaleTimeString() : ""}</div>
-              </li>
-            ))}
-          </ul>
+          <div className="rounded-2xl bg-card shadow-sm dark:ring-1 dark:ring-white/10">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Attendee</TableHead>
+                  <TableHead className="text-right">Time</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.recent.map((r) => (
+                  <TableRow key={r.id}>
+                    <TableCell>
+                      <div className="font-medium text-foreground">{r.name || "-"}</div>
+                      <div className="mt-0.5 font-mono text-xs text-muted-foreground">
+                        {r.booking_reference} · {r.number_of_tickets} ticket{r.number_of_tickets === 1 ? "" : "s"}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right text-sm text-muted-foreground">
+                      {r.checked_in_at ? new Date(r.checked_in_at).toLocaleTimeString() : "-"}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </div>
     </div>
@@ -1077,6 +1175,7 @@ function ScannersTab({ eventId }: { eventId: string }) {
   const [formErr, setFormErr] = React.useState("")
   const [reveal, setReveal] = React.useState<CodeReveal | null>(null)
   const [copied, setCopied] = React.useState(false)
+  const [revokeTarget, setRevokeTarget] = React.useState<ScannerInvite | null>(null)
 
   const fetchInvites = React.useCallback(async () => {
     try {
@@ -1129,7 +1228,6 @@ function ScannersTab({ eventId }: { eventId: string }) {
   }
 
   const revoke = async (id: string) => {
-    if (!window.confirm("Revoke this scanner session? The phone using it will be signed out on its next request.")) return
     try {
       await fetch(`${API_URL}/api/organizer/scanner-invites/${id}/revoke`, {
         method: "POST",
@@ -1138,6 +1236,8 @@ function ScannersTab({ eventId }: { eventId: string }) {
       await fetchInvites()
     } catch {
       setErr("Network error revoking invite.")
+    } finally {
+      setRevokeTarget(null)
     }
   }
 
@@ -1197,7 +1297,7 @@ function ScannersTab({ eventId }: { eventId: string }) {
       )}
 
       {/* Issue form */}
-      <form onSubmit={submit} className="space-y-3 rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-4">
+      <form onSubmit={submit} className="space-y-3 rounded-xl bg-card shadow-sm dark:ring-1 dark:ring-white/10 p-4">
         <h3 className="text-sm font-semibold text-foreground">Issue scanner invite</h3>
         <p className="text-xs text-muted-foreground">
           Generate a one-time code your door staff can redeem in the MyScope Organizer app to scan tickets - no MyScope account required.
@@ -1244,7 +1344,7 @@ function ScannersTab({ eventId }: { eventId: string }) {
                                                     "outline"
             const canRevoke = inv.computed_status === "active" || inv.computed_status === "unredeemed"
             return (
-              <li key={inv.id} className="flex flex-col gap-2 rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-4 sm:flex-row sm:items-center sm:justify-between">
+              <li key={inv.id} className="flex flex-col gap-2 rounded-xl bg-card shadow-sm dark:ring-1 dark:ring-white/10 p-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-baseline gap-2">
                     <span className="text-base font-semibold text-foreground">
@@ -1270,7 +1370,7 @@ function ScannersTab({ eventId }: { eventId: string }) {
                     </Button>
                   )}
                   {canRevoke && (
-                    <Button variant="outline" size="sm" onClick={() => revoke(inv.id)} className="hover:bg-destructive/10 hover:text-destructive">
+                    <Button variant="outline" size="sm" onClick={() => setRevokeTarget(inv)} className="hover:bg-destructive/10 hover:text-destructive">
                       <XCircle /> Revoke
                     </Button>
                   )}
@@ -1281,6 +1381,37 @@ function ScannersTab({ eventId }: { eventId: string }) {
         </ul>
         )
       })()}
+
+      <AlertDialog open={revokeTarget !== null} onOpenChange={(open) => { if (!open) setRevokeTarget(null) }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Revoke this scanner session?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {revokeTarget && (
+                <>
+                  The phone using{" "}
+                  <span className="font-medium text-foreground">
+                    {revokeTarget.gate_label || "this invite"}
+                  </span>{" "}
+                  will be signed out on its next request.
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setRevokeTarget(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault()
+                if (revokeTarget) revoke(revokeTarget.id)
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              <XCircle /> Revoke
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
@@ -1303,6 +1434,8 @@ function PromoTab({ eventId, tickets }: { eventId: string; tickets: TicketType[]
   })
   const [creating, setCreating] = React.useState(false)
   const [formErr, setFormErr] = React.useState("")
+  const [view, setView] = React.useState<"codes" | "offers">("codes")
+  const [deleteTarget, setDeleteTarget] = React.useState<PromoCode | null>(null)
 
   const fetchCodes = React.useCallback(async () => {
     try {
@@ -1349,7 +1482,6 @@ function PromoTab({ eventId, tickets }: { eventId: string; tickets: TicketType[]
   }
 
   const removeCode = async (id: string) => {
-    if (!window.confirm("Delete this promo code? Anyone with it won't be able to redeem anymore.")) return
     try {
       await fetch(`${API_URL}/api/organizer/events/${eventId}/promo-codes/${id}`, {
         method: "DELETE",
@@ -1358,14 +1490,42 @@ function PromoTab({ eventId, tickets }: { eventId: string; tickets: TicketType[]
       await fetchCodes()
     } catch {
       setErr("Network error deleting code.")
+    } finally {
+      setDeleteTarget(null)
     }
   }
 
   if (err) return <ErrorBanner message={err} />
 
   return (
-    <div className="space-y-8">
-      {/* --- Promo codes section --- */}
+    <div className="space-y-5">
+      {/* Toggle — promo codes (buyer enters a code) and offers (auto-applied
+          at a quantity threshold) are distinct mechanisms, so showing one at
+          a time keeps each tool focused instead of a long stacked scroll. */}
+      <div className="inline-flex rounded-lg bg-muted p-1">
+        <button
+          type="button"
+          onClick={() => setView("codes")}
+          className={cn(
+            "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+            view === "codes" ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          <Tag className="h-3.5 w-3.5" /> Promo codes
+        </button>
+        <button
+          type="button"
+          onClick={() => setView("offers")}
+          className={cn(
+            "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+            view === "offers" ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          <Percent className="h-3.5 w-3.5" /> Offers
+        </button>
+      </div>
+
+      {view === "codes" ? (
       <section className="space-y-5">
         <div>
           <h2 className="text-base font-semibold text-foreground">Promo codes</h2>
@@ -1375,7 +1535,7 @@ function PromoTab({ eventId, tickets }: { eventId: string; tickets: TicketType[]
         </div>
 
       {/* Create form */}
-      <form onSubmit={submit} className="space-y-3 rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-4">
+      <form onSubmit={submit} className="space-y-3 rounded-xl bg-card shadow-sm dark:ring-1 dark:ring-white/10 p-4">
         <h3 className="text-sm font-semibold text-foreground">New promo code</h3>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Input
@@ -1437,7 +1597,7 @@ function PromoTab({ eventId, tickets }: { eventId: string; tickets: TicketType[]
               ? `${Number(c.discount_value)}% off`
               : `${formatLkr(c.discount_value)} off`
             return (
-              <li key={c.id} className="flex flex-col gap-2 rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-4 sm:flex-row sm:items-center sm:justify-between">
+              <li key={c.id} className="flex flex-col gap-2 rounded-xl bg-card shadow-sm dark:ring-1 dark:ring-white/10 p-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-baseline gap-2">
                     <span className="font-mono text-base font-bold tracking-wider text-foreground">{c.code}</span>
@@ -1449,7 +1609,7 @@ function PromoTab({ eventId, tickets }: { eventId: string; tickets: TicketType[]
                     {c.min_total != null && ` · min ${formatLkr(c.min_total)}`}
                   </div>
                 </div>
-                <Button variant="outline" size="sm" onClick={() => removeCode(c.id)} className="hover:bg-destructive/10 hover:text-destructive">
+                <Button variant="outline" size="sm" onClick={() => setDeleteTarget(c)} className="hover:bg-destructive/10 hover:text-destructive">
                   <Trash2 /> Delete
                 </Button>
               </li>
@@ -1457,11 +1617,38 @@ function PromoTab({ eventId, tickets }: { eventId: string; tickets: TicketType[]
           })}
         </ul>
       )}
-      </section>
 
-      {/* --- Offers section --- automatic discounts when the cart hits a
-          quantity threshold. Distinct from promo codes (no code entry). */}
-      <OffersCard eventId={eventId} tickets={tickets} />
+      <AlertDialog open={deleteTarget !== null} onOpenChange={(open) => { if (!open) setDeleteTarget(null) }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this promo code?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deleteTarget && (
+                <>
+                  Anyone with <span className="font-mono font-medium text-foreground">{deleteTarget.code}</span> won&rsquo;t
+                  be able to redeem it anymore.
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteTarget(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault()
+                if (deleteTarget) removeCode(deleteTarget.id)
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              <Trash2 /> Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      </section>
+      ) : (
+        <OffersCard eventId={eventId} tickets={tickets} />
+      )}
     </div>
   )
 }
@@ -1498,6 +1685,7 @@ function OffersCard({ eventId, tickets }: { eventId: string; tickets: TicketType
     discount_value: "",
     ticket_type_id: "" as string,  // "" = all tiers
   })
+  const [deleteTarget, setDeleteTarget] = React.useState<EventOffer | null>(null)
 
   const fetchOffers = React.useCallback(async () => {
     try {
@@ -1558,7 +1746,6 @@ function OffersCard({ eventId, tickets }: { eventId: string; tickets: TicketType
   }
 
   const removeOffer = async (id: string) => {
-    if (!window.confirm("Delete this offer? Bookings that already used it keep their discount.")) return
     try {
       await fetch(`${API_URL}/api/organizer/events/${eventId}/offers/${id}`, {
         method: "DELETE",
@@ -1567,6 +1754,8 @@ function OffersCard({ eventId, tickets }: { eventId: string; tickets: TicketType
       await fetchOffers()
     } catch {
       setErr("Network error deleting offer.")
+    } finally {
+      setDeleteTarget(null)
     }
   }
 
@@ -1596,7 +1785,7 @@ function OffersCard({ eventId, tickets }: { eventId: string; tickets: TicketType
       </div>
 
       {/* Create form */}
-      <form onSubmit={submit} className="space-y-3 rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-4">
+      <form onSubmit={submit} className="space-y-3 rounded-xl bg-card shadow-sm dark:ring-1 dark:ring-white/10 p-4">
         <div>
           <h3 className="text-sm font-semibold text-foreground">New offer</h3>
           <p className="mt-0.5 text-xs text-muted-foreground">
@@ -1688,7 +1877,7 @@ function OffersCard({ eventId, tickets }: { eventId: string; tickets: TicketType
       ) : (
         <ul className="space-y-2">
           {offers.map(o => (
-            <li key={o.id} className="flex flex-col gap-2 rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-4 sm:flex-row sm:items-center sm:justify-between">
+            <li key={o.id} className="flex flex-col gap-2 rounded-xl bg-card shadow-sm dark:ring-1 dark:ring-white/10 p-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-baseline gap-2">
                   <span className="font-semibold text-foreground">{o.name}</span>
@@ -1701,7 +1890,7 @@ function OffersCard({ eventId, tickets }: { eventId: string; tickets: TicketType
                 <Button variant="outline" size="sm" onClick={() => toggleActive(o)}>
                   {o.is_active ? "Pause" : "Resume"}
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => removeOffer(o.id)} className="hover:bg-destructive/10 hover:text-destructive">
+                <Button variant="outline" size="sm" onClick={() => setDeleteTarget(o)} className="hover:bg-destructive/10 hover:text-destructive">
                   <Trash2 /> Delete
                 </Button>
               </div>
@@ -1709,6 +1898,34 @@ function OffersCard({ eventId, tickets }: { eventId: string; tickets: TicketType
           ))}
         </ul>
       )}
+
+      <AlertDialog open={deleteTarget !== null} onOpenChange={(open) => { if (!open) setDeleteTarget(null) }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this offer?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deleteTarget && (
+                <>
+                  Bookings that already used <span className="font-medium text-foreground">{deleteTarget.name}</span>{" "}
+                  keep their discount.
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteTarget(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault()
+                if (deleteTarget) removeOffer(deleteTarget.id)
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              <Trash2 /> Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   )
 }
@@ -1741,23 +1958,37 @@ function WaitlistTab({ eventId }: { eventId: string }) {
   if (entries.length === 0) return <EmptyHint icon={Bell} text="No one on the waitlist yet." />
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <p className="text-xs text-muted-foreground">
         These people will be notified when seats open up. (Auto-notification cron is coming - for now, you can reach out manually.)
       </p>
-      <ul className="space-y-2">
-        {entries.map(w => (
-          <li key={w.id} className="flex items-center justify-between rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-4">
-            <div className="min-w-0">
-              <div className="font-semibold text-foreground">{w.name || "-"}</div>
-              <div className="text-xs text-muted-foreground">{w.email} · wants {w.requested_quantity} ticket(s)</div>
-            </div>
-            <div className="shrink-0 text-xs text-muted-foreground">
-              joined {new Date(w.created_at).toLocaleDateString()}
-            </div>
-          </li>
-        ))}
-      </ul>
+      <div className="rounded-2xl bg-card shadow-sm dark:ring-1 dark:ring-white/10">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Wants</TableHead>
+              <TableHead className="text-right">Joined</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {entries.map((w) => (
+              <TableRow key={w.id}>
+                <TableCell>
+                  <div className="font-medium text-foreground">{w.name || "-"}</div>
+                  <div className="mt-0.5 text-xs text-muted-foreground">{w.email}</div>
+                </TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  {w.requested_quantity} ticket{w.requested_quantity === 1 ? "" : "s"}
+                </TableCell>
+                <TableCell className="text-right text-sm text-muted-foreground">
+                  {new Date(w.created_at).toLocaleDateString()}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   )
 }
@@ -1772,20 +2003,25 @@ function CommsTab({ eventId }: { eventId: string }) {
   const [channel, setChannel] = React.useState<Channel>("email")
   const [sending, setSending] = React.useState(false)
   const [result, setResult] = React.useState<{ text: string; tone: "ok" | "err" } | null>(null)
+  const [confirmOpen, setConfirmOpen] = React.useState(false)
 
   // SMS messages charge per ~160-char segment (Unicode = 70). Show the
   // organizer their roughly-projected segment count so they're not surprised
   // by a long body burning through SMS credit.
   const smsSegments = Math.max(1, Math.ceil((message.length + 30) / 160))
+  const channelLabel = channel === "both" ? "email and SMS" : channel === "sms" ? "SMS" : "email"
 
-  const send = async (e: React.FormEvent) => {
+  const requestSend = (e: React.FormEvent) => {
     e.preventDefault()
     if (!message.trim()) {
       setResult({ text: "Message is required.", tone: "err" })
       return
     }
-    const channelLabel = channel === "both" ? "email and SMS" : channel === "sms" ? "SMS" : "email"
-    if (!window.confirm(`Send this announcement to every confirmed attendee via ${channelLabel}?`)) return
+    setConfirmOpen(true)
+  }
+
+  const send = async () => {
+    setConfirmOpen(false)
     setSending(true)
     setResult(null)
     try {
@@ -1816,7 +2052,7 @@ function CommsTab({ eventId }: { eventId: string }) {
   const currentHint = channelOptions.find(c => c.value === channel)?.hint
 
   return (
-    <form onSubmit={send} className="space-y-4 rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-4">
+    <form onSubmit={requestSend} className="space-y-4 rounded-xl bg-card shadow-sm dark:ring-1 dark:ring-white/10 p-4">
       <div>
         <h3 className="text-sm font-semibold text-foreground">Send announcement to attendees</h3>
         <p className="mt-1 text-xs text-muted-foreground">
@@ -1827,7 +2063,7 @@ function CommsTab({ eventId }: { eventId: string }) {
       {/* Channel selector — segmented control */}
       <div>
         <div className="mb-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Channel</div>
-        <div className="inline-flex rounded-lg border border-border bg-muted/30 p-1">
+        <div className="inline-flex rounded-lg bg-muted p-1">
           {channelOptions.map(opt => {
             const active = channel === opt.value
             return (
@@ -1838,8 +2074,8 @@ function CommsTab({ eventId }: { eventId: string }) {
                 className={cn(
                   "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
                   active
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    ? "bg-card text-primary shadow-sm"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 {opt.label}
@@ -1881,6 +2117,23 @@ function CommsTab({ eventId }: { eventId: string }) {
           {result.text}
         </p>
       )}
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Send this announcement?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This goes out to every confirmed attendee via <span className="font-medium text-foreground">{channelLabel}</span>. This can&rsquo;t be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setConfirmOpen(false)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={(e) => { e.preventDefault(); send() }}>
+              <Send /> Send
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </form>
   )
 }
@@ -2053,7 +2306,7 @@ function InviteTab({ eventId, tickets }: { eventId: string; tickets: TicketType[
       {/* Composer */}
       <form
         onSubmit={send}
-        className="space-y-4 rounded-2xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-5 shadow-xs"
+        className="space-y-4 rounded-2xl bg-card shadow-sm dark:ring-1 dark:ring-white/10 p-5"
       >
         <header className="flex items-center gap-2">
           <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -2172,7 +2425,7 @@ function InviteTab({ eventId, tickets }: { eventId: string; tickets: TicketType[
       </form>
 
       {/* History */}
-      <section className="rounded-2xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm shadow-xs">
+      <section className="rounded-2xl bg-card shadow-sm dark:ring-1 dark:ring-white/10">
         <header className="flex items-center justify-between border-b border-border px-5 py-4">
           <div className="flex items-center gap-2">
             <Mail className="h-4 w-4 text-muted-foreground" />
@@ -2285,7 +2538,7 @@ function InviteTab({ eventId, tickets }: { eventId: string; tickets: TicketType[
 
 function Stat({ label, value, note }: { label: string; value: string; note?: string }) {
   return (
-    <div className="rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-3">
+    <div className="rounded-xl bg-card shadow-sm dark:ring-1 dark:ring-white/10 p-3">
       <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="mt-1 text-xl font-bold text-foreground">{value}</div>
       {note && (
@@ -2372,7 +2625,7 @@ function PostponeModal({
       onClick={() => !busy && onClose()}
     >
       <div
-        className="w-full max-w-md rounded-2xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-6 shadow-2xl"
+        className="w-full max-w-md rounded-2xl bg-card dark:ring-1 dark:ring-white/10 p-6 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-start justify-between gap-3">

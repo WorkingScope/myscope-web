@@ -7,6 +7,7 @@ import toast from "react-hot-toast"
 import {
   AlertCircle,
   ArrowLeft,
+  Calendar,
   Check,
   Edit3,
   ImageIcon,
@@ -419,145 +420,175 @@ export default function EditEventPage() {
         </div>
       )}
 
-      {/* Event form */}
-      <div className="rounded-2xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-6 shadow-xs sm:p-8">
-        <h2 className="mb-5 flex items-center gap-2 text-lg font-semibold text-foreground">
-          <Edit3 className="h-5 w-5 text-primary" />
-          Event details
-        </h2>
-
-        <fieldset disabled={!canEdit || busy !== null} className="space-y-5">
-          <FieldGroup id="title" label="Title" required>
-            <Input
-              id="title"
-              type="text"
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-              placeholder="Indie Music Night"
-            />
-          </FieldGroup>
-
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <FieldGroup id="category" label="Category">
-              <select
-                id="category"
-                aria-label="Event category"
-                value={form.category}
-                onChange={(e) => setForm({ ...form, category: e.target.value })}
-                className="h-9 w-full rounded-md border border-border bg-card/30 px-3 text-sm text-foreground backdrop-blur-md transition-colors focus:border-primary/50 focus:bg-card/50 focus:outline-none"
-              >
-                <option value="">Pick one…</option>
-                <option value="Concerts">Concerts</option>
-                <option value="Theatre">Theatre</option>
-                <option value="Sports">Sports</option>
-                <option value="Events">Events</option>
-              </select>
-            </FieldGroup>
-            <FieldGroup id="capacity" label="Capacity">
+      {/* Event form — split into focused sections instead of one long wall
+          of fields, so each card answers one question (what/when-where/
+          media/notifications) at a glance. One shared fieldset still gates
+          every field on canEdit/busy, same as before. */}
+      <fieldset disabled={!canEdit || busy !== null} className="space-y-5">
+        {/* Basic info */}
+        <div className="rounded-2xl bg-card p-6 shadow-sm dark:ring-1 dark:ring-white/10 sm:p-8">
+          <h2 className="mb-5 flex items-center gap-2 text-lg font-semibold text-foreground">
+            <Edit3 className="h-5 w-5 text-primary" />
+            Basic info
+          </h2>
+          <div className="space-y-5">
+            <FieldGroup id="title" label="Title" required>
               <Input
-                id="capacity"
-                type="number"
-                min={1}
-                value={form.capacity}
-                onChange={(e) => setForm({ ...form, capacity: e.target.value })}
+                id="title"
+                type="text"
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                placeholder="Indie Music Night"
+              />
+            </FieldGroup>
+
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <FieldGroup id="category" label="Category">
+                <select
+                  id="category"
+                  aria-label="Event category"
+                  value={form.category}
+                  onChange={(e) => setForm({ ...form, category: e.target.value })}
+                  className="h-9 w-full rounded-md border border-border bg-card/30 px-3 text-sm text-foreground backdrop-blur-md transition-colors focus:border-primary/50 focus:bg-card/50 focus:outline-none"
+                >
+                  <option value="">Pick one…</option>
+                  <option value="Concerts">Concerts</option>
+                  <option value="Theatre">Theatre</option>
+                  <option value="Sports">Sports</option>
+                  <option value="Events">Events</option>
+                </select>
+              </FieldGroup>
+              <FieldGroup id="capacity" label="Capacity">
+                <Input
+                  id="capacity"
+                  type="number"
+                  min={1}
+                  value={form.capacity}
+                  onChange={(e) => setForm({ ...form, capacity: e.target.value })}
+                />
+              </FieldGroup>
+            </div>
+
+            <FieldGroup id="description" label="Description">
+              <textarea
+                id="description"
+                rows={5}
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                className="w-full rounded-md border border-input bg-transparent px-2.5 py-2 text-base shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30"
               />
             </FieldGroup>
           </div>
+        </div>
 
-          <FieldGroup id="description" label="Description">
-            <textarea
-              id="description"
-              rows={5}
-              value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-              className="w-full rounded-md border border-input bg-transparent px-2.5 py-2 text-base shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30"
-            />
-          </FieldGroup>
+        {/* Date & venue */}
+        <div className="rounded-2xl bg-card p-6 shadow-sm dark:ring-1 dark:ring-white/10 sm:p-8">
+          <h2 className="mb-5 flex items-center gap-2 text-lg font-semibold text-foreground">
+            <Calendar className="h-5 w-5 text-primary" />
+            Date &amp; venue
+          </h2>
+          <div className="space-y-5">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <FieldGroup id="start_time" label="Start time" required>
+                <Input
+                  id="start_time"
+                  type="datetime-local"
+                  value={form.start_time}
+                  onChange={(e) => setForm({ ...form, start_time: e.target.value })}
+                />
+              </FieldGroup>
+              <FieldGroup id="end_time" label="End time">
+                <Input
+                  id="end_time"
+                  type="datetime-local"
+                  value={form.end_time}
+                  onChange={(e) => setForm({ ...form, end_time: e.target.value })}
+                />
+              </FieldGroup>
+            </div>
 
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <FieldGroup id="start_time" label="Start time" required>
+            <FieldGroup id="venue_name" label="Venue name">
               <Input
-                id="start_time"
-                type="datetime-local"
-                value={form.start_time}
-                onChange={(e) => setForm({ ...form, start_time: e.target.value })}
+                id="venue_name"
+                type="text"
+                value={form.venue_name}
+                onChange={(e) => setForm({ ...form, venue_name: e.target.value })}
               />
             </FieldGroup>
-            <FieldGroup id="end_time" label="End time">
+
+            <FieldGroup id="venue_address" label="Venue address">
               <Input
-                id="end_time"
-                type="datetime-local"
-                value={form.end_time}
-                onChange={(e) => setForm({ ...form, end_time: e.target.value })}
+                id="venue_address"
+                type="text"
+                value={form.venue_address}
+                onChange={(e) => setForm({ ...form, venue_address: e.target.value })}
+              />
+            </FieldGroup>
+
+            <FieldGroup id="venue_location_url" label="Location URL" hint="Paste a Google Maps link so attendees can find the venue.">
+              <Input
+                id="venue_location_url"
+                type="url"
+                value={form.venue_location_url}
+                onChange={(e) => setForm({ ...form, venue_location_url: e.target.value })}
+                placeholder="https://maps.google.com/..."
               />
             </FieldGroup>
           </div>
+        </div>
 
-          <FieldGroup id="venue_name" label="Venue name">
-            <Input
-              id="venue_name"
-              type="text"
-              value={form.venue_name}
-              onChange={(e) => setForm({ ...form, venue_name: e.target.value })}
-            />
-          </FieldGroup>
+        {/* Media */}
+        <div className="rounded-2xl bg-card p-6 shadow-sm dark:ring-1 dark:ring-white/10 sm:p-8">
+          <h2 className="mb-5 flex items-center gap-2 text-lg font-semibold text-foreground">
+            <ImageIcon className="h-5 w-5 text-primary" />
+            Media
+          </h2>
+          <div className="space-y-5">
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-foreground">Banner images</label>
+              <p className="text-xs text-muted-foreground">
+                The first (main) banner sets your event page background. Attendees
+                can swipe through the rest. Use &ldquo;Set as main&rdquo; to reorder.
+              </p>
+              <BannerGalleryField
+                value={form.banner_images}
+                onChange={(urls) => setForm({ ...form, banner_images: urls })}
+                disabled={!canEdit || busy !== null}
+              />
+            </div>
 
-          <FieldGroup id="venue_address" label="Venue address">
-            <Input
-              id="venue_address"
-              type="text"
-              value={form.venue_address}
-              onChange={(e) => setForm({ ...form, venue_address: e.target.value })}
-            />
-          </FieldGroup>
-
-          <FieldGroup id="venue_location_url" label="Location URL" hint="Paste a Google Maps link so attendees can find the venue.">
-            <Input
-              id="venue_location_url"
-              type="url"
-              value={form.venue_location_url}
-              onChange={(e) => setForm({ ...form, venue_location_url: e.target.value })}
-              placeholder="https://maps.google.com/..."
-            />
-          </FieldGroup>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-foreground">Banner images</label>
-            <p className="text-xs text-muted-foreground">
-              The first (main) banner sets your event page background. Attendees
-              can swipe through the rest. Use &ldquo;Set as main&rdquo; to reorder.
-            </p>
-            <BannerGalleryField
-              value={form.banner_images}
-              onChange={(urls) => setForm({ ...form, banner_images: urls })}
+            <BannerUploadField
+              label="Seating / zone layout (optional)"
+              hint="A venue map showing zones or the seat plan. Shown to attendees on the ticket-selection page."
+              value={form.layout_image_url}
+              onChange={(url) => setForm({ ...form, layout_image_url: url })}
               disabled={!canEdit || busy !== null}
             />
-          </div>
 
-          <BannerUploadField
-            label="Seating / zone layout (optional)"
-            hint="A venue map showing zones or the seat plan. Shown to attendees on the ticket-selection page."
-            value={form.layout_image_url}
-            onChange={(url) => setForm({ ...form, layout_image_url: url })}
-            disabled={!canEdit || busy !== null}
-          />
-
-          <FieldGroup
-            id="trailer_url"
-            label="YouTube trailer (optional)"
-            hint="Paste a YouTube link - watch URL, youtu.be short link, or Shorts. Attendees will see it as a playable video on your event page."
-          >
-            <Input
+            <FieldGroup
               id="trailer_url"
-              type="url"
-              inputMode="url"
-              value={form.trailer_url}
-              onChange={(e) => setForm({ ...form, trailer_url: e.target.value })}
-              placeholder="https://www.youtube.com/watch?v=…"
-              disabled={!canEdit || busy !== null}
-            />
-          </FieldGroup>
+              label="YouTube trailer (optional)"
+              hint="Paste a YouTube link - watch URL, youtu.be short link, or Shorts. Attendees will see it as a playable video on your event page."
+            >
+              <Input
+                id="trailer_url"
+                type="url"
+                inputMode="url"
+                value={form.trailer_url}
+                onChange={(e) => setForm({ ...form, trailer_url: e.target.value })}
+                placeholder="https://www.youtube.com/watch?v=…"
+                disabled={!canEdit || busy !== null}
+              />
+            </FieldGroup>
+          </div>
+        </div>
 
+        {/* Notifications */}
+        <div className="rounded-2xl bg-card p-6 shadow-sm dark:ring-1 dark:ring-white/10 sm:p-8">
+          <h2 className="mb-5 flex items-center gap-2 text-lg font-semibold text-foreground">
+            <MessageSquare className="h-5 w-5 text-primary" />
+            Notifications
+          </h2>
           <label
             className={cn(
               "flex w-full cursor-pointer items-start gap-3 rounded-xl border p-4 text-left transition-colors",
@@ -601,8 +632,8 @@ export default function EditEventPage() {
               />
             </span>
           </label>
-        </fieldset>
-      </div>
+        </div>
+      </fieldset>
 
       {/* Ticket types editor */}
       <TicketTypesEditor
@@ -978,7 +1009,7 @@ function TicketTypesEditor({
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-6 shadow-xs sm:p-8">
+    <div className="rounded-2xl bg-card p-6 shadow-sm dark:ring-1 dark:ring-white/10 sm:p-8">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
           <Tag className="h-5 w-5 text-primary" />

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import Link from "next/link"
 import {
   AlertCircle,
@@ -10,6 +11,7 @@ import {
   CalendarCheck,
   CheckCircle,
   Clock,
+  LayoutDashboard,
   Loader,
   Plus,
   Ticket,
@@ -19,6 +21,7 @@ import {
 } from "lucide-react"
 import { useOrganizerGuard } from "@/hooks/useOrganizerGuard"
 import { Button } from "@/components/ui/button"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ContactCollaborate } from "@/components/organizer/contact-collaborate"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
@@ -83,6 +86,11 @@ function greeting() {
   return "Good evening"
 }
 
+// Shared card surface — shadow-based elevation instead of a border, so
+// content reads as one clean panel rather than a bordered box with a
+// separate divider-header strip.
+const CARD = "rounded-2xl bg-card shadow-sm dark:ring-1 dark:ring-white/10"
+
 export default function OrganizerDashboardPage() {
   const { user, loading: authLoading } = useOrganizerGuard("/organizer")
 
@@ -143,16 +151,31 @@ export default function OrganizerDashboardPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            {today}
-          </p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            {greeting()}, {firstName}
-          </h1>
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3.5">
+          {user?.profileImage ? (
+            <Image
+              src={user.profileImage}
+              alt={firstName}
+              width={56}
+              height={56}
+              className="h-14 w-14 shrink-0 rounded-2xl border border-border object-cover"
+            />
+          ) : (
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <LayoutDashboard className="h-6 w-6" />
+            </div>
+          )}
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              {today}
+            </p>
+            <h1 className="mt-0.5 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              {greeting()}, {firstName}
+            </h1>
+          </div>
         </div>
-        <Button asChild>
+        <Button asChild className="shrink-0">
           <Link href="/organizer/events/create">
             <Plus /> Create event
           </Link>
@@ -208,17 +231,17 @@ export default function OrganizerDashboardPage() {
       )}
 
       {/* Events status strip */}
-      <section className="rounded-2xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm">
-        <div className="flex items-center justify-between px-5 py-4">
+      <section className={CARD}>
+        <div className="flex items-center justify-between px-5 pt-4">
           <h2 className="text-base font-semibold text-foreground">Events overview</h2>
           <Link
             href="/organizer/events"
-            className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex items-center gap-1 text-xs font-medium text-primary transition-colors hover:underline"
           >
             Manage all <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
-        <div className="grid grid-cols-2 divide-y divide-border border-t border-border sm:grid-cols-4 sm:divide-x sm:divide-y-0">
+        <div className="mt-3 grid grid-cols-2 divide-y divide-border sm:grid-cols-4 sm:divide-x sm:divide-y-0">
           {(Object.keys(STATUS_META) as Array<keyof typeof STATUS_META>).map((key) => {
             const meta = STATUS_META[key]
             const Icon = meta.icon
@@ -242,11 +265,14 @@ export default function OrganizerDashboardPage() {
       {/* Top events + Recent bookings */}
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* Top events */}
-        <div className="rounded-2xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm">
-          <div className="flex items-center justify-between border-b border-border px-5 py-4">
-            <h3 className="text-base font-semibold text-foreground">Top events</h3>
-            <span className="text-xs text-muted-foreground">by revenue</span>
+        <div className={CARD}>
+          <div className="flex items-start justify-between px-5 pt-4">
+            <div>
+              <h3 className="text-base font-semibold text-foreground">Top events</h3>
+              <p className="text-sm text-muted-foreground">By revenue, all time</p>
+            </div>
           </div>
+          <div className="mt-2 pb-2">
           {data.top_events.length === 0 ? (
             <EmptyState
               icon={TrendingUp}
@@ -254,49 +280,64 @@ export default function OrganizerDashboardPage() {
               subtitle="Top-earning events will rank here once bookings come in."
             />
           ) : (
-            <ul className="divide-y divide-border">
-              {(() => {
-                const maxRevenue = Math.max(...data.top_events.slice(0, 5).map((e) => e.revenue), 1)
-                return data.top_events.slice(0, 5).map((e, idx) => (
-                  <li key={e.event_id} className="px-5 py-3.5">
-                    <div className="flex items-center gap-4">
-                      <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
-                        {idx + 1}
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <Link
-                          href={`/organizer/events/${e.event_id}`}
-                          className="line-clamp-1 text-sm font-medium text-foreground transition-colors hover:text-primary"
-                        >
-                          {e.title}
-                        </Link>
-                        <div className="text-xs text-muted-foreground">
-                          {e.tickets.toLocaleString()} tickets · {e.bookings.toLocaleString()} bookings
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Event</TableHead>
+                  <TableHead>Tickets</TableHead>
+                  <TableHead className="text-right">Revenue</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {(() => {
+                  const maxRevenue = Math.max(...data.top_events.slice(0, 5).map((e) => e.revenue), 1)
+                  return data.top_events.slice(0, 5).map((e, idx) => (
+                    <TableRow key={e.event_id}>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
+                            {idx + 1}
+                          </span>
+                          <div className="min-w-0">
+                            <Link
+                              href={`/organizer/events/${e.event_id}`}
+                              className="line-clamp-1 text-sm font-medium text-foreground transition-colors hover:text-primary"
+                            >
+                              {e.title}
+                            </Link>
+                            <div className="mt-1.5 h-1.5 w-28 max-w-full overflow-hidden rounded-full bg-muted">
+                              <div
+                                className="h-full rounded-full bg-primary"
+                                style={{ width: `${Math.max(4, (e.revenue / maxRevenue) * 100)}%` }}
+                              />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="shrink-0 text-sm font-semibold text-foreground">
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {e.tickets.toLocaleString()} · {e.bookings.toLocaleString()} bookings
+                      </TableCell>
+                      <TableCell className="text-right text-sm font-semibold text-foreground">
                         {formatLkr(e.revenue)}
-                      </div>
-                    </div>
-                    <div className="ml-11 mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
-                      <div
-                        className="h-full rounded-full bg-primary"
-                        style={{ width: `${Math.max(4, (e.revenue / maxRevenue) * 100)}%` }}
-                      />
-                    </div>
-                  </li>
-                ))
-              })()}
-            </ul>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                })()}
+              </TableBody>
+            </Table>
           )}
+          </div>
         </div>
 
         {/* Recent bookings */}
-        <div className="rounded-2xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm">
-          <div className="flex items-center justify-between border-b border-border px-5 py-4">
-            <h3 className="text-base font-semibold text-foreground">Recent bookings</h3>
-            <span className="text-xs text-muted-foreground">latest 5</span>
+        <div className={CARD}>
+          <div className="flex items-start justify-between px-5 pt-4">
+            <div>
+              <h3 className="text-base font-semibold text-foreground">Recent bookings</h3>
+              <p className="text-sm text-muted-foreground">Latest 5</p>
+            </div>
           </div>
+          <div className="mt-2 pb-2">
           {data.recent_bookings.length === 0 ? (
             <EmptyState
               icon={CalendarCheck}
@@ -304,40 +345,48 @@ export default function OrganizerDashboardPage() {
               subtitle="New bookings across your events will show up here as they come in."
             />
           ) : (
-            <ul className="divide-y divide-border">
-              {data.recent_bookings.slice(0, 5).map((b) => (
-                <li key={b.id} className="flex items-center justify-between gap-4 px-5 py-3.5">
-                  <div className="min-w-0 flex-1">
-                    <div className="line-clamp-1 text-sm font-medium text-foreground">
-                      {b.event_title}
-                    </div>
-                    <div className="truncate text-xs text-muted-foreground">
-                      {b.attendee_name ?? "Anonymous"} ·{" "}
-                      {b.number_of_tickets} ticket{b.number_of_tickets === 1 ? "" : "s"}
-                    </div>
-                  </div>
-                  <div className="shrink-0 text-right">
-                    <div className="text-sm font-semibold text-foreground">
-                      {formatLkr(b.total_amount)}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Event</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead className="text-right">Amount</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.recent_bookings.slice(0, 5).map((b) => (
+                  <TableRow key={b.id}>
+                    <TableCell>
+                      <div className="line-clamp-1 text-sm font-medium text-foreground">
+                        {b.event_title}
+                      </div>
+                      <div className="mt-0.5 truncate text-xs text-muted-foreground">
+                        {b.attendee_name ?? "Anonymous"} ·{" "}
+                        {b.number_of_tickets} ticket{b.number_of_tickets === 1 ? "" : "s"}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
                       {new Date(b.created_at).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
                       })}
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                    </TableCell>
+                    <TableCell className="text-right text-sm font-semibold text-foreground">
+                      {formatLkr(b.total_amount)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )}
+          </div>
         </div>
       </section>
 
       {/* Payout summary */}
       {balance && (
-        <section className="rounded-2xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm">
-          <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <section className={CARD}>
+          <div className="flex items-center justify-between px-5 pt-4">
             <h3 className="text-base font-semibold text-foreground">Payouts</h3>
             <Button asChild variant="outline" size="sm">
               <Link href="/organizer/payouts">
@@ -345,7 +394,7 @@ export default function OrganizerDashboardPage() {
               </Link>
             </Button>
           </div>
-          <div className="grid grid-cols-2 divide-y divide-border sm:grid-cols-4 sm:divide-x sm:divide-y-0">
+          <div className="mt-3 grid grid-cols-2 divide-y divide-border pb-1 sm:grid-cols-4 sm:divide-x sm:divide-y-0">
             <BalanceMetric label="Pending" value={formatLkr(balance.pending)} accent />
             <BalanceMetric label="Gross" value={formatLkr(balance.gross)} />
             <BalanceMetric label="Net" value={formatLkr(balance.net)} />
@@ -372,25 +421,23 @@ function KpiCard({
   feature?: boolean
 }) {
   return (
-    <div
-      className={
-        feature
-          ? "rounded-2xl bg-primary p-4 text-primary-foreground sm:p-5"
-          : "rounded-2xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-4 sm:p-5"
-      }
-    >
-      <div className={`flex items-center gap-2 ${feature ? "text-primary-foreground/75" : "text-muted-foreground"}`}>
-        <Icon className="h-3.5 w-3.5 shrink-0" />
-        <span className="text-[10px] sm:text-xs font-medium uppercase tracking-wider truncate">{label}</span>
+    <div className={feature ? `${CARD} bg-primary text-primary-foreground` : CARD}>
+      <div className="px-3.5 py-3">
+        <div className="flex items-center justify-between">
+          <span className={`text-[10px] font-semibold uppercase tracking-wide ${feature ? "text-primary-foreground/75" : "text-muted-foreground"}`}>
+            {label}
+          </span>
+          <Icon className={`h-4 w-4 shrink-0 ${feature ? "text-primary-foreground/80" : "text-muted-foreground"}`} />
+        </div>
+        {/* truncate guards against long currency strings (e.g. "LKR 12,345,678")
+            breaking the 2-col mobile layout. */}
+        <p className="mt-1.5 truncate text-xl font-bold leading-tight tracking-tight">{value}</p>
+        {hint && (
+          <p className={`mt-0.5 truncate text-[11px] ${feature ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+            {hint}
+          </p>
+        )}
       </div>
-      {/* truncate guards against long currency strings (e.g. "LKR 12,345,678")
-          breaking the 2-col mobile layout. */}
-      <div className="mt-2 truncate text-xl sm:text-2xl font-bold leading-tight">{value}</div>
-      {hint && (
-        <p className={`mt-1 truncate text-[11px] sm:text-xs ${feature ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-          {hint}
-        </p>
-      )}
     </div>
   )
 }
