@@ -209,14 +209,14 @@ export default function AboutPage() {
         <p className="text-sm font-medium uppercase tracking-wider text-primary">
           Meet the founder
         </p>
-        <div className="mt-6 grid grid-cols-1 gap-8 sm:grid-cols-[260px_1fr] sm:items-start sm:gap-10">
-          <div className="relative mx-auto aspect-4/5 w-44 overflow-hidden rounded-2xl border border-border/60 bg-muted/40 shadow-lg sm:mx-0 sm:w-full sm:max-w-[260px]">
+        <div className="mt-6 grid grid-cols-1 gap-8 sm:grid-cols-[160px_1fr] sm:items-start sm:gap-10">
+          <div className="relative mx-auto aspect-square w-28 overflow-hidden rounded-full border border-border/60 bg-muted/40 shadow-lg sm:mx-0 sm:w-full sm:max-w-[160px]">
             <Image
               src="/Images/akila-jayakody.jpg"
               alt="Akila Jayakody, founder of MyScope"
               fill
               priority
-              sizes="(max-width: 640px) 176px, 260px"
+              sizes="(max-width: 640px) 112px, 160px"
               className="object-cover"
             />
           </div>

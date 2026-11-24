@@ -203,6 +203,13 @@ export default async function HomePage() {
               existing translucent card treatment. */}
           <div className="rounded-2xl border border-transparent bg-[oklch(0.37_0.17_302)] dark:border-border dark:bg-card/60 dark:backdrop-blur-sm p-5 sm:p-10">
             <div className="mx-auto max-w-2xl text-center">
+              <Image
+                src="/Images/myscope_client_splash.png"
+                alt="MyScope Client"
+                width={1600}
+                height={1600}
+                className="mx-auto mb-4 h-16 w-16 rounded-2xl shadow-lg sm:mb-5 sm:h-20 sm:w-20"
+              />
               <h2 className="text-xl font-bold tracking-tight text-white dark:text-foreground sm:text-3xl">
                 Manage your event with MyScope Client
               </h2>
