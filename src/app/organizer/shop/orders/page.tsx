@@ -12,8 +12,13 @@ import {
 import { useOrganizerGuard } from "@/hooks/useOrganizerGuard"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+
+// Shared card surface — shadow-based elevation, matching Overview and Event
+// Manage, rather than the older border+backdrop-blur treatment.
+const CARD = "rounded-2xl bg-card shadow-sm dark:ring-1 dark:ring-white/10"
 
 type ProductStatus = "draft" | "pending_review" | "published" | "sold_out" | "rejected" | "archived"
 type ProductType = "event_product" | "shop_product"
@@ -101,10 +106,7 @@ export default function OrganizerOrdersByProductPage() {
       </Link>
 
       <header>
-        <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-foreground">
-          <Receipt className="h-6 w-6 text-primary" />
-          Orders
-        </h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Orders</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Pick a product to see its orders and current revenue.
         </p>
@@ -142,7 +144,7 @@ export default function OrganizerOrdersByProductPage() {
             <Link
               key={p.id}
               href={`/organizer/shop/${p.id}/orders`}
-              className="group flex flex-wrap items-center gap-4 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/50"
+              className={cn("group flex flex-wrap items-center gap-4 p-4 transition-colors hover:ring-primary/40", CARD)}
             >
               <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-border bg-muted">
                 {p.image ? (

@@ -22,6 +22,14 @@ import { cn } from "@/lib/utils"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
+// Shared card surface — shadow-based elevation, matching Overview and Event
+// Manage, rather than the older border+backdrop-blur treatment. (Note:
+// EditableCard, used for the Business/Witness/Banking sections below, is
+// shared with the consumer dashboard profile page and intentionally left on
+// its existing border+backdrop-blur style — changing it would ripple into
+// that unrelated page.)
+const CARD = "rounded-2xl bg-card shadow-sm dark:ring-1 dark:ring-white/10"
+
 // Mirrors the organizer_profiles columns the GET /api/organizers/me endpoint
 // returns. Bank fields exist on the same row but are managed elsewhere.
 type VerificationStatus = "pending" | "approved" | "rejected" | null
@@ -401,26 +409,22 @@ export default function OrganizerProfilePage() {
         const isRejected = status === "rejected"
 
         // Per-status palette. Kept on this case branch (not Tailwind cn())
-        // so adjustments are obvious at a glance.
-        // Solid surface — no gradient. Per-status accent lives in the ring,
-        // status pip, and (for approved) the soft glow blob.
+        // so adjustments are obvious at a glance. Surface itself is the
+        // shared shadow-based CARD; only the ring accent varies by status.
         const palette = isApproved
           ? {
               ring: "ring-1 ring-primary/25 dark:ring-primary/25",
-              bg: "bg-card dark:bg-card/60 dark:backdrop-blur-sm",
               accent: "text-primary",
               accentDot: "bg-primary",
             }
           : isPending
           ? {
               ring: "ring-1 ring-amber-200/70 dark:ring-amber-400/20",
-              bg: "bg-card dark:bg-card/60 dark:backdrop-blur-sm",
               accent: "text-amber-700 dark:text-amber-300",
               accentDot: "bg-amber-500",
             }
           : {
               ring: "ring-1 ring-destructive/20",
-              bg: "bg-card dark:bg-card/60 dark:backdrop-blur-sm",
               accent: "text-destructive",
               accentDot: "bg-destructive",
             }
@@ -430,11 +434,7 @@ export default function OrganizerProfilePage() {
 
         return (
           <section
-            className={cn(
-              "rounded-xl border border-border p-4",
-              palette.bg,
-              palette.ring,
-            )}
+            className={cn(CARD, "p-4", palette.ring)}
           >
             <div className="flex items-center gap-3">
               {/* Badge / icon — small and to the point, no glow. */}
@@ -492,7 +492,7 @@ export default function OrganizerProfilePage() {
       {/* Brand image — self-contained: uploading or removing persists
           immediately (no separate Save step), so it's a plain section rather
           than an editable card. */}
-      <section className="rounded-2xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-6">
+      <section className={cn(CARD, "p-6")}>
         <header className="mb-4">
           <h2 className="font-semibold text-foreground">Brand image</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">

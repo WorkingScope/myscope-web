@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { DropdownMenu } from "radix-ui"
 import { ChevronDown, LogOut } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
+import { useTheme } from "@/components/theme/theme-provider"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 /**
@@ -19,6 +20,18 @@ import { ThemeToggle } from "@/components/ui/theme-toggle"
 export function OrganizerTopBar() {
   const { user, logout } = useAuth()
   const router = useRouter()
+
+  // Separate logo art per theme (drawn for each background specifically),
+  // pre-cropped to trim the baked-in padding around the wordmark so it reads
+  // large within the bar's fixed height — default to the light logo before
+  // mount so SSR and the first client render match (see SiteHeader).
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = React.useState(false)
+  React.useEffect(() => setMounted(true), [])
+  const logoSrc =
+    mounted && resolvedTheme === "dark"
+      ? "/Images/navbar_logo_dark_organizer.png"
+      : "/Images/navbar_logo_light_organizer.png"
 
   const handleLogout = () => {
     logout()
@@ -35,19 +48,16 @@ export function OrganizerTopBar() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/65">
       <div className="mx-auto flex h-16 w-full max-w-[1600px] items-center gap-3 px-4 sm:px-6">
-        <Link href="/organizer" className="flex shrink-0 items-center gap-2" aria-label="Organizer dashboard home">
+        <Link href="/organizer" className="flex shrink-0 items-center" aria-label="Organizer dashboard home">
           <Image
-            src="/Images/navbar_logo.png"
+            src={logoSrc}
             alt="MyScope"
-            width={165}
-            height={48}
-            className="h-8 w-auto"
+            width={275}
+            height={80}
+            className="h-9 w-auto"
             style={{ width: "auto" }}
             priority
           />
-          <span className="hidden rounded-full border border-border px-2 py-0.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground sm:inline">
-            Organizer
-          </span>
         </Link>
 
         <div className="ml-auto flex items-center gap-1">

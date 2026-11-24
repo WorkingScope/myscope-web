@@ -34,6 +34,10 @@ import { cn } from "@/lib/utils"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
+// Shared card surface — shadow-based elevation, matching Overview and Event
+// Manage, rather than the older border+backdrop-blur treatment.
+const CARD = "rounded-2xl bg-card shadow-sm dark:ring-1 dark:ring-white/10"
+
 type OrderStatus = "Pending" | "Confirmed" | "Cancelled" | "Refunded"
 type FulfillmentStatus = "pending" | "preparing" | "shipped" | "delivered" | "picked_up" | "returned"
 
@@ -188,7 +192,7 @@ export default function OrganizerOrderDetailPage() {
 
   if (error || !order) {
     return (
-      <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
+      <div className={cn(CARD, "p-6 text-sm text-muted-foreground")}>
         {error || "Order not found."}
         <div className="mt-3">
           <Button asChild variant="outline" size="sm">
@@ -216,7 +220,7 @@ export default function OrganizerOrderDetailPage() {
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <Receipt className="h-5 w-5 text-primary" />
-            <h1 className="font-mono text-2xl font-semibold tracking-tight text-foreground">
+            <h1 className="font-mono text-2xl font-bold tracking-tight text-foreground">
               {order.order_reference}
             </h1>
             <Badge variant={meta.variant}>{meta.label}</Badge>
@@ -234,7 +238,7 @@ export default function OrganizerOrderDetailPage() {
         <div className="space-y-6 lg:col-span-2">
           {/* Fulfillment controls (only when paid) */}
           {order.status === "Confirmed" && (
-            <section className="rounded-xl border border-border bg-card p-5">
+            <section className={cn(CARD, "p-5")}>
               <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                 Fulfillment
               </h2>
@@ -293,7 +297,7 @@ export default function OrganizerOrderDetailPage() {
           </AlertDialog>
 
           {/* Items */}
-          <section className="rounded-xl border border-border bg-card p-5">
+          <section className={cn(CARD, "p-5")}>
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
               Items
             </h2>
@@ -332,7 +336,7 @@ export default function OrganizerOrderDetailPage() {
 
           {/* Address / pickup info */}
           {order.fulfillment_type === "shipping" && order.shipping_address && (
-            <section className="rounded-xl border border-border bg-card p-5">
+            <section className={cn(CARD, "p-5")}>
               <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                 <Truck className="h-4 w-4" />
                 Ship to
@@ -351,7 +355,7 @@ export default function OrganizerOrderDetailPage() {
             </section>
           )}
           {order.fulfillment_type === "pickup" && (
-            <section className="rounded-xl border border-border bg-card p-5">
+            <section className={cn(CARD, "p-5")}>
               <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                 <Package className="h-4 w-4" />
                 Pickup
@@ -366,7 +370,7 @@ export default function OrganizerOrderDetailPage() {
         </div>
 
         <aside className="space-y-4 lg:col-span-1">
-          <section className="rounded-xl border border-border bg-card p-5 space-y-2 text-sm">
+          <section className={cn(CARD, "p-5 space-y-2 text-sm")}>
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
               Summary
             </h2>
@@ -384,7 +388,7 @@ export default function OrganizerOrderDetailPage() {
             </div>
           </section>
 
-          <section className="rounded-xl border border-border bg-card p-5">
+          <section className={cn(CARD, "p-5")}>
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
               Buyer
             </h2>

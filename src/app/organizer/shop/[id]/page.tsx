@@ -6,7 +6,6 @@ import { useParams, useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import {
   AlertCircle,
-  AlertTriangle,
   Archive,
   ArrowLeft,
   CheckCircle2,
@@ -24,9 +23,23 @@ import {
 import { useOrganizerGuard } from "@/hooks/useOrganizerGuard"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { ProductForm, type ProductFormValues } from "@/components/organizer/product-form"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+
+// Shared card surface — shadow-based elevation, matching Overview and Event
+// Manage, rather than the older border+backdrop-blur treatment.
+const CARD = "rounded-2xl bg-card shadow-sm dark:ring-1 dark:ring-white/10"
 
 type ProductStatus = "draft" | "pending_review" | "published" | "sold_out" | "rejected" | "archived"
 
@@ -213,7 +226,7 @@ export default function EditProductPage() {
 
   if (!product) {
     return (
-      <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
+      <div className={`${CARD} p-6 text-sm text-muted-foreground`}>
         {error || "Product not found."}
         <div className="mt-3">
           <Button asChild variant="outline" size="sm">
@@ -253,7 +266,7 @@ export default function EditProductPage() {
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">{product.title}</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">{product.title}</h1>
             <Badge variant={meta.variant}>{meta.label}</Badge>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">Edit product details and manage status.</p>
@@ -377,50 +390,29 @@ export default function EditProductPage() {
         }
       />
 
-      {showDeleteModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-          onClick={() => { if (!deleting) setShowDeleteModal(false) }}
-        >
-          <div
-            className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-start gap-3">
-              <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-                <AlertTriangle className="h-5 w-5" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <h2 className="text-lg font-semibold text-foreground">Delete permanently?</h2>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  <span className="font-semibold text-foreground">&ldquo;{product.title}&rdquo;</span> will be
-                  removed for good - this can&apos;t be undone. Products with past orders can&apos;t be deleted;
-                  archive them instead.
-                </p>
-              </div>
-            </div>
-            <div className="mt-5 flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setShowDeleteModal(false)}
-                disabled={deleting}
-                className="rounded-lg border border-border px-3 py-2 text-sm text-foreground transition hover:bg-muted disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handlePermanentDelete}
-                disabled={deleting}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-destructive px-4 py-2 text-sm text-destructive-foreground transition hover:opacity-90 disabled:opacity-50"
-              >
-                {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-                Delete permanently
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AlertDialog open={showDeleteModal} onOpenChange={(open) => { if (!open && !deleting) setShowDeleteModal(false) }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete permanently?</AlertDialogTitle>
+            <AlertDialogDescription>
+              <span className="font-semibold text-foreground">&ldquo;{product.title}&rdquo;</span> will be
+              removed for good - this can&apos;t be undone. Products with past orders can&apos;t be deleted;
+              archive them instead.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting} onClick={() => setShowDeleteModal(false)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleting}
+              onClick={(e) => { e.preventDefault(); handlePermanentDelete() }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+              Delete permanently
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

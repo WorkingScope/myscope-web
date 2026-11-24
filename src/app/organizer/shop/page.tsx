@@ -5,7 +5,6 @@ import Link from "next/link"
 import toast from "react-hot-toast"
 import {
   AlertCircle,
-  AlertTriangle,
   Archive,
   CheckCircle2,
   Clock,
@@ -26,9 +25,23 @@ import { useOrganizerGuard } from "@/hooks/useOrganizerGuard"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { cn } from "@/lib/utils"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+
+// Shared card surface — shadow-based elevation, matching Overview and Event
+// Manage, rather than the older border+backdrop-blur treatment.
+const CARD = "rounded-2xl bg-card shadow-sm dark:ring-1 dark:ring-white/10"
 
 type ProductStatus = "draft" | "pending_review" | "published" | "sold_out" | "rejected" | "archived"
 type ProductType   = "event_product" | "shop_product"
@@ -219,10 +232,7 @@ export default function OrganizerShopPage() {
     <div className="space-y-6">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-foreground">
-            <ShoppingBag className="h-6 w-6 text-primary" />
-            Shop
-          </h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Shop</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Sell event merch and organizer-wide products. New listings are reviewed by an admin before they go live.
           </p>
@@ -289,7 +299,7 @@ export default function OrganizerShopPage() {
       {filtered.length === 0 ? (
         <EmptyState hasAny={products.length > 0} />
       ) : (
-        <div className="overflow-hidden rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm">
+        <div className={cn("overflow-hidden", CARD)}>
           <table className="w-full text-sm">
             <thead className="border-b border-border bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
@@ -465,50 +475,33 @@ export default function OrganizerShopPage() {
         </div>
       )}
 
-      {deleteTarget && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-          onClick={() => { if (!deleting) setDeleteTarget(null) }}
-        >
-          <div
-            className="w-full max-w-md rounded-2xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-6 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-start gap-3">
-              <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-                <AlertTriangle className="h-5 w-5" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <h2 className="text-lg font-semibold text-foreground">Delete permanently?</h2>
-                <p className="mt-1 text-sm text-muted-foreground">
+      <AlertDialog open={deleteTarget !== null} onOpenChange={(open) => { if (!open && !deleting) setDeleteTarget(null) }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete permanently?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deleteTarget && (
+                <>
                   <span className="font-semibold text-foreground">&ldquo;{deleteTarget.title}&rdquo;</span> will be
                   removed for good - this can&apos;t be undone. Products with past orders can&apos;t be deleted;
                   archive them instead.
-                </p>
-              </div>
-            </div>
-            <div className="mt-5 flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setDeleteTarget(null)}
-                disabled={deleting}
-                className="rounded-lg border border-border px-3 py-2 text-sm text-foreground transition hover:bg-muted disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handlePermanentDelete}
-                disabled={deleting}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-destructive px-4 py-2 text-sm text-destructive-foreground transition hover:opacity-90 disabled:opacity-50"
-              >
-                {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-                Delete permanently
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting} onClick={() => setDeleteTarget(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleting}
+              onClick={(e) => { e.preventDefault(); handlePermanentDelete() }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+              Delete permanently
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

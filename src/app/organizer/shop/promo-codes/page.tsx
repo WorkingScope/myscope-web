@@ -17,9 +17,23 @@ import { useOrganizerGuard } from "@/hooks/useOrganizerGuard"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { cn } from "@/lib/utils"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+
+// Shared card surface — shadow-based elevation, matching Overview and Event
+// Manage, rather than the older border+backdrop-blur treatment.
+const CARD = "rounded-2xl bg-card shadow-sm dark:ring-1 dark:ring-white/10"
 
 type DiscountType = "percentage" | "fixed"
 
@@ -100,6 +114,8 @@ export default function ShopPromoCodesPage() {
   // Products available to scope a promo to. Loaded once on first auth so the
   // picker is ready when the organizer opens the form.
   const [products, setProducts] = React.useState<ProductOption[]>([])
+  const [deleteTarget, setDeleteTarget] = React.useState<PromoCode | null>(null)
+  const [deleting, setDeleting] = React.useState(false)
 
   const fetchCodes = React.useCallback(async () => {
     try {
@@ -216,21 +232,25 @@ export default function ShopPromoCodesPage() {
     }
   }
 
-  const handleDelete = async (c: PromoCode) => {
-    if (!confirm(`Delete code "${c.code}"?`)) return
+  const handleDelete = async () => {
+    if (!deleteTarget) return
+    setDeleting(true)
     try {
-      const res = await fetch(`${API_URL}/api/organizer/shop/promo-codes/${c.id}`, {
+      const res = await fetch(`${API_URL}/api/organizer/shop/promo-codes/${deleteTarget.id}`, {
         method: "DELETE",
         credentials: "include",
       })
       const data = await res.json()
       if (data?.success) {
+        setDeleteTarget(null)
         await fetchCodes()
       } else {
         toast.error(data?.message || "Couldn't delete.")
       }
     } catch {
       toast.error("Network error.")
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -254,10 +274,7 @@ export default function ShopPromoCodesPage() {
 
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-foreground">
-            <Tag className="h-6 w-6 text-primary" />
-            Shop promo codes
-          </h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Shop promo codes</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Storefront-wide codes that apply to your shop. Buyers redeem them at checkout once shop checkout launches.
           </p>
@@ -280,12 +297,12 @@ export default function ShopPromoCodesPage() {
           <Tag className="mx-auto h-10 w-10 text-muted-foreground" />
           <h2 className="mt-3 text-lg font-semibold text-foreground">No promo codes yet</h2>
           <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
-            Set up codes now so they're ready when shop checkout launches.
+            Set up codes now so they&apos;re ready when shop checkout launches.
           </p>
           <Button className="mt-4" onClick={openNew}>Create your first code</Button>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-border bg-card">
+        <div className={cn("overflow-hidden", CARD)}>
           <table className="w-full text-sm">
             <thead className="border-b border-border bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
@@ -330,7 +347,7 @@ export default function ShopPromoCodesPage() {
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-1.5">
                         <Button size="sm" variant="outline" onClick={() => openEdit(c)}>Edit</Button>
-                        <Button size="sm" variant="ghost" onClick={() => handleDelete(c)}>
+                        <Button size="sm" variant="ghost" onClick={() => setDeleteTarget(c)}>
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       </div>
@@ -343,12 +360,39 @@ export default function ShopPromoCodesPage() {
         </div>
       )}
 
+      <AlertDialog open={deleteTarget !== null} onOpenChange={(open) => { if (!open && !deleting) setDeleteTarget(null) }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this code?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deleteTarget && (
+                <>
+                  <span className="font-mono font-semibold text-foreground">{deleteTarget.code}</span> will be
+                  permanently removed - this can&apos;t be undone.
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting} onClick={() => setDeleteTarget(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleting}
+              onClick={(e) => { e.preventDefault(); handleDelete() }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? <Loader className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={closeForm}>
           <form
             onClick={(e) => e.stopPropagation()}
             onSubmit={submit}
-            className="w-full max-w-lg space-y-4 rounded-xl border border-border bg-card p-5 shadow-2xl"
+            className="w-full max-w-lg space-y-4 rounded-2xl bg-card dark:ring-1 dark:ring-white/10 p-5 shadow-2xl"
           >
             <div className="flex items-center justify-between gap-3">
               <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
@@ -377,7 +421,7 @@ export default function ShopPromoCodesPage() {
                 className="font-mono uppercase"
               />
               {editing && (
-                <p className="text-[10px] text-muted-foreground">Codes can't be renamed after creation.</p>
+                <p className="text-[10px] text-muted-foreground">Codes can&apos;t be renamed after creation.</p>
               )}
             </div>
 

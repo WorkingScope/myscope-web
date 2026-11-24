@@ -20,6 +20,10 @@ import { cn } from "@/lib/utils"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 
+// Shared card surface — shadow-based elevation, matching Overview and Event
+// Manage, rather than the older border+backdrop-blur treatment.
+const CARD = "rounded-2xl bg-card shadow-sm dark:ring-1 dark:ring-white/10"
+
 type OrderStatus = "Pending" | "Confirmed" | "Cancelled" | "Refunded"
 type FulfillmentStatus = "pending" | "preparing" | "shipped" | "delivered" | "picked_up" | "returned"
 
@@ -180,8 +184,7 @@ export default function OrganizerProductOrdersPage() {
 
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-foreground">
-            <Receipt className="h-6 w-6 text-primary" />
+          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             {product?.title ?? "Product orders"}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -241,7 +244,7 @@ export default function OrganizerProductOrdersPage() {
             <Link
               key={o.id}
               href={`/organizer/shop/orders/${o.id}`}
-              className="group flex flex-wrap items-center gap-4 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/50"
+              className={cn("group flex flex-wrap items-center gap-4 p-4 transition-colors hover:ring-primary/40", CARD)}
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
                 {o.fulfillment_type === "shipping" ? <Truck className="h-4 w-4" /> : <Package className="h-4 w-4" />}

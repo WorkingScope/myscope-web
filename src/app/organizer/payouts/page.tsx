@@ -4,7 +4,6 @@ import * as React from "react"
 import Link from "next/link"
 import {
   AlertCircle,
-  AlertTriangle,
   ArrowLeft,
   Banknote,
   Calendar,
@@ -26,9 +25,23 @@ import toast from "react-hot-toast"
 import { useOrganizerGuard } from "@/hooks/useOrganizerGuard"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { cn } from "@/lib/utils"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+
+// Shared card surface — shadow-based elevation, matching Overview and Event
+// Manage, rather than the older border+backdrop-blur treatment.
+const CARD = "rounded-2xl bg-card shadow-sm dark:ring-1 dark:ring-white/10"
 
 interface EventLite {
   id: string
@@ -251,7 +264,7 @@ export default function OrganizerPayoutsPage() {
 
   if (error) {
     return (
-      <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-8 text-center">
+      <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-8 text-center">
         <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
           <AlertCircle className="h-5 w-5" />
         </span>
@@ -365,49 +378,28 @@ export default function OrganizerPayoutsPage() {
         )}
       </section>
 
-      {/* Delete-payout confirm modal — shared by both event + product cards. */}
-      {deleteTarget && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-          onClick={() => { if (!deleting) setDeleteTarget(null) }}
-        >
-          <div
-            className="w-full max-w-md rounded-2xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm p-6 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-start gap-3">
-              <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-                <AlertTriangle className="h-5 w-5" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <h2 className="text-lg font-semibold text-foreground">Remove this row?</h2>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  This permanently removes it from your payout history - this can&apos;t be undone.
-                </p>
-              </div>
-            </div>
-            <div className="mt-5 flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setDeleteTarget(null)}
-                disabled={deleting}
-                className="rounded-lg border border-border px-3 py-2 text-sm text-foreground transition hover:bg-muted disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={executeDeletePayout}
-                disabled={deleting}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-destructive px-4 py-2 text-sm text-destructive-foreground transition hover:opacity-90 disabled:opacity-50"
-              >
-                {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Delete-payout confirm dialog — shared by both event + product cards. */}
+      <AlertDialog open={deleteTarget !== null} onOpenChange={(open) => { if (!open && !deleting) setDeleteTarget(null) }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove this row?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently removes it from your payout history - this can&apos;t be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting} onClick={() => setDeleteTarget(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleting}
+              onClick={(e) => { e.preventDefault(); executeDeletePayout() }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
@@ -500,7 +492,7 @@ function EventPayoutCard({
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm shadow-xs">
+    <div className={cn("overflow-hidden", CARD)}>
       {/* Event header */}
       <div className="flex flex-wrap items-start gap-4 p-4">
         <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-border bg-muted">
@@ -818,7 +810,7 @@ function ProductPayoutCard({
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card dark:bg-card/60 dark:backdrop-blur-sm shadow-xs">
+    <div className={cn("overflow-hidden", CARD)}>
       {/* Header */}
       <div className="flex flex-wrap items-start gap-4 p-4">
         <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-border bg-muted">
@@ -1023,8 +1015,9 @@ function SummaryTile({
   return (
     <div
       className={cn(
-        "rounded-xl border bg-card p-4 sm:p-5 shadow-xs",
-        highlight ? "border-primary/40" : "border-border",
+        CARD,
+        "p-4 sm:p-5",
+        highlight && "ring-1 ring-primary/40 dark:ring-primary/40",
       )}
     >
       <div className="flex items-start justify-between gap-3">
