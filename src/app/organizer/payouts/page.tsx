@@ -67,6 +67,9 @@ interface PerEventBalance {
   refunded: number
   paid_out: number
   pending: number
+  // This event's own effective platform-fee rate (0-1) — may differ from the
+  // platform-wide default if an admin has set a per-event override.
+  platform_fee_pct: number
   // Communications charges — only events with admin-enabled billing have a
   // non-zero charge here; everyone else gets zeros so the UI can always
   // render the line without conditionals.
@@ -81,6 +84,7 @@ interface ProductBalance {
   refunded: number
   paid_out: number
   pending: number
+  platform_fee_pct: number
 }
 
 interface Payout {
@@ -151,7 +155,6 @@ export default function OrganizerPayoutsPage() {
 
   const [entries, setEntries] = React.useState<EventPayoutEntry[]>([])
   const [products, setProducts] = React.useState<ProductPayoutEntry[]>([])
-  const [platformFeePct, setPlatformFeePct] = React.useState(0.04)
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState("")
 
@@ -183,7 +186,6 @@ export default function OrganizerPayoutsPage() {
       }
       setEntries(byEventRes.data.events ?? [])
       setProducts(byEventRes.data.products ?? [])
-      setPlatformFeePct(byEventRes.data.platform_fee_pct ?? 0.04)
 
       const p = meRes?.data?.profile
       if (p) {
@@ -290,9 +292,8 @@ export default function OrganizerPayoutsPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Payouts</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Each live event has its own card. MyScope retains a{" "}
-          <span className="font-semibold text-foreground">{(platformFeePct * 100).toFixed(1)}%</span>{" "}
-          platform fee. Events past 3 days are archived from this view.
+          Each live event has its own card, showing the platform fee that applies to it.
+          Events past 3 days are archived from this view.
         </p>
       </div>
 
@@ -546,7 +547,10 @@ function EventPayoutCard({
           line to keep the grid uncluttered). */}
       <div className="grid grid-cols-2 gap-x-4 gap-y-2 border-t border-border bg-muted/20 p-4 sm:grid-cols-4">
         <BalanceLine label="Gross" value={formatLkr(balance.gross)} />
-        <BalanceLine label="Platform fee" value={`-${formatLkr(balance.fee)}`} />
+        <BalanceLine
+          label={`Platform fee (${(balance.platform_fee_pct * 100).toFixed(1)}%)`}
+          value={`-${formatLkr(balance.fee)}`}
+        />
         <BalanceLine label="Refunds" value={`-${formatLkr(balance.refunded)}`} />
         {(balance.comms_charge || 0) > 0 ? (
           <BalanceLine label="Comms" value={`-${formatLkr(balance.comms_charge || 0)}`} />
@@ -843,7 +847,10 @@ function ProductPayoutCard({
       {/* Balance breakdown */}
       <div className="grid grid-cols-2 gap-x-4 gap-y-2 border-t border-border bg-muted/20 p-4 sm:grid-cols-4">
         <BalanceLine label="Gross" value={formatLkr(balance.gross)} />
-        <BalanceLine label="Platform fee" value={`-${formatLkr(balance.fee)}`} />
+        <BalanceLine
+          label={`Platform fee (${(balance.platform_fee_pct * 100).toFixed(1)}%)`}
+          value={`-${formatLkr(balance.fee)}`}
+        />
         <BalanceLine label="Refunds" value={`-${formatLkr(balance.refunded)}`} />
         <BalanceLine label="Net" value={formatLkr(balance.net)} />
         <BalanceLine label="Paid out" value={formatLkr(balance.paid_out)} />
